@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  name          String
+  email         String?
+  phone         String
+  roomType      String
+  checkIn       DateTime
+  checkOut      DateTime
+  guests        Int
+  notes         String?
+  status        String        @default("pending")
+  totalAmount   Float?
+  paymentStatus String        @default("pending")
+  paymentProof  PaymentProof?
+  createdAt     DateTime      @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model HotelRoom {
+  id            String   @id @default(cuid())
+  name          String
+  nameSo        String
+  description   String
+  descriptionSo String
+  price         Float
+  image         String
+  features      String
+  maxGuests     Int      @default(2)
+  available     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MenuItem {
+  id            String   @id @default(cuid())
+  category      String
+  name          String
+  nameSo        String
+  description   String
+  descriptionSo String
+  price         Float
+  available     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model HotelImage {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  imageUrl  String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  category    String
+  description String
+  amount      Float
+  date        DateTime
+  createdBy   String?
+  createdAt   DateTime @default(now())
+}
+
+model Revenue {
+  id          String   @id @default(cuid())
+  category    String
+  description String
+  amount      Float
+  date        DateTime
+  createdBy   String?
+  createdAt   DateTime @default(now())
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  valueSo   String
+  updatedAt DateTime @updatedAt
+}
+
+model DashboardNote {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  priority  String   @default("normal")
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InventoryItem {
+  id            String    @id @default(cuid())
+  name          String
+  nameSo        String
+  category      String
+  quantity      Int
+  unit          String
+  minQuantity   Int       @default(5)
+  costPerUnit   Float
+  supplier      String?
+  lastRestocked DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model PaymentProof {
+  id          String    @id @default(cuid())
+  bookingId   String   @unique
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  imageUrl    String
+  senderName  String
+  amount      Float?
+  accountName String?
+  verified    Boolean   @default(false)
+  verifiedBy  String?
+  verifiedAt  DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+}

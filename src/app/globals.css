@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-warm-50: #FFFBEB;
+  --color-warm-100: #FEF3C7;
+  --color-warm-200: #FDE68A;
+  --color-warm-300: #FCD34D;
+  --color-warm-400: #FBBF24;
+  --color-warm-500: #F59E0B;
+  --color-warm-600: #D97706;
+  --color-warm-700: #B45309;
+  --color-warm-800: #92400E;
+  --color-warm-900: #78350F;
+  --color-warm-950: #451A03;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #FFFBEB;
+  --foreground: #292524;
+  --card: #FFFFFF;
+  --card-foreground: #292524;
+  --popover: #FFFFFF;
+  --popover-foreground: #292524;
+  --primary: #92400E;
+  --primary-foreground: #FFFBEB;
+  --secondary: #FEF3C7;
+  --secondary-foreground: #78350F;
+  --muted: #FEF3C7;
+  --muted-foreground: #78716C;
+  --accent: #FDE68A;
+  --accent-foreground: #451A03;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #E7E5E4;
+  --input: #E7E5E4;
+  --ring: #B45309;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: #FFFBEB;
+  --sidebar-foreground: #292524;
+  --sidebar-primary: #92400E;
+  --sidebar-primary-foreground: #FFFBEB;
+  --sidebar-accent: #FEF3C7;
+  --sidebar-accent-foreground: #78350F;
+  --sidebar-border: #E7E5E4;
+  --sidebar-ring: #B45309;
+}
+
+.dark {
+  --background: #1C1917;
+  --foreground: #FAFAF9;
+  --card: #292524;
+  --card-foreground: #FAFAF9;
+  --popover: #292524;
+  --popover-foreground: #FAFAF9;
+  --primary: #FDE68A;
+  --primary-foreground: #451A03;
+  --secondary: #44403C;
+  --secondary-foreground: #FAFAF9;
+  --muted: #44403C;
+  --muted-foreground: #A8A29E;
+  --accent: #44403C;
+  --accent-foreground: #FAFAF9;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: #44403C;
+  --input: #44403C;
+  --ring: #D97706;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: #1C1917;
+  --sidebar-foreground: #FAFAF9;
+  --sidebar-primary: #FDE68A;
+  --sidebar-primary-foreground: #451A03;
+  --sidebar-accent: #44403C;
+  --sidebar-accent-foreground: #FAFAF9;
+  --sidebar-border: #44403C;
+  --sidebar-ring: #D97706;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Somali language font styling */
+html[lang="so"] body,
+body.font-somali {
+  font-family: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif !important;
+}
+
+/* General responsive fixes for longer Somali text */
+@media (max-width: 640px) {
+  .hero-somali-fix h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  .hero-somali-fix p {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #EDE5D5;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #C4A03C;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #A08530;
+}
+
+/* Hero parallax gradient */
+.hero-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(196, 160, 60, 0.85) 0%,
+    rgba(156, 128, 48, 0.7) 40%,
+    rgba(76, 64, 20, 0.6) 100%
+  );
+}
+
+/* Fix dropdown select visibility on dark theme */
+[data-slot="select-content"] {
+  background-color: #111114 !important;
+  border-color: #1E1E24 !important;
+  color: #fff !important;
+}
+
+[data-slot="select-item"] {
+  color: #fff !important;
+  background-color: transparent;
+}
+
+[data-slot="select-item"]:hover,
+[data-slot="select-item"][data-highlighted] {
+  background-color: rgba(196, 160, 60, 0.15) !important;
+  color: #C4A03C !important;
+}
+
+[data-slot="select-item"][data-state="checked"] {
+  background-color: rgba(196, 160, 60, 0.12) !important;
+  color: #C4A03C !important;
+}
+
+[data-slot="select-label"] {
+  color: #A09890 !important;
+}
+
+[data-slot="select-separator"] {
+  background-color: #1E1E24 !important;
+}
+
+/* Calendar popover fix */
+[data-slot="popover-content"] {
+  background-color: #111114 !important;
+  border-color: #1E1E24 !important;
+}
+
+/* General calendar cell size */
+.rdp {
+  --rdp-cell-size: 36px;
+}
