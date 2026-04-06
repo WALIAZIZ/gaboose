@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getAuthUser } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -25,16 +22,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Image and sender name are required' }, { status: 400 })
     }
 
-    // Save image
+    // Check file size (max 5MB)
+    if (imageFile.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Image too large. Max 5MB.' }, { status: 400 })
+    }
+
+    // Convert image to base64 data URL (works on Vercel - no filesystem needed)
     const bytes = await imageFile.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const ext = imageFile.name.split('.').pop() || 'jpg'
-    const filename = `payment-${id}-${Date.now()}.${ext}`
-    const uploadDir = path.join(process.cwd(), 'public', 'upload', 'payments')
-    await mkdir(uploadDir, { recursive: true })
-    await writeFile(path.join(uploadDir, filename), buffer)
-
-    const imageUrl = `/upload/payments/${filename}`
+    const base64 = buffer.toString('base64')
+    const mimeType = imageFile.type || 'image/jpeg'
+    const imageUrl = `data:${mimeType};base64,${base64}`
 
     // Create payment proof
     const paymentProof = await db.paymentProof.create({
