@@ -4,10 +4,10 @@ import { db } from "@/lib/db";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, phone, roomType, checkIn, checkOut, guests, notes } = body;
+    const { name, phone, roomType, checkIn, checkOut, notes } = body;
 
     // Validate required fields
-    if (!name || !phone || !roomType || !checkIn || !checkOut || !guests) {
+    if (!name || !phone || !roomType || !checkIn || !checkOut) {
       return NextResponse.json(
         { error: "All required fields must be provided" },
         { status: 400 }
@@ -32,13 +32,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (guests < 1 || guests > 6) {
-      return NextResponse.json(
-        { error: "Number of guests must be between 1 and 6" },
-        { status: 400 }
-      );
-    }
-
     const booking = await db.booking.create({
       data: {
         name,
@@ -46,7 +39,7 @@ export async function POST(request: NextRequest) {
         roomType,
         checkIn: checkInDate,
         checkOut: checkOutDate,
-        guests,
+        guests: 1,
         notes: notes || null,
         status: "pending",
       },
