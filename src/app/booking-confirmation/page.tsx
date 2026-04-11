@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import {
@@ -25,7 +25,7 @@ import { useLanguage } from '@/lib/language'
 
 const cardStyle = { backgroundColor: '#111114', borderColor: '#1E1E24' }
 
-export default function BookingConfirmationPage() {
+function BookingConfirmationContent() {
   const { t, lang } = useLanguage()
   const searchParams = useSearchParams()
   const bookingId = searchParams.get('bookingId')
@@ -493,5 +493,17 @@ export default function BookingConfirmationPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function BookingConfirmationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#08080A' }}>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: '#C4A03C' }} />
+      </div>
+    }>
+      <BookingConfirmationContent />
+    </Suspense>
   )
 }
