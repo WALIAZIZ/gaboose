@@ -162,14 +162,15 @@ export default function Home() {
   // Render
   // ============================================================
   return (
-    <div className="min-h-screen bg-[#08080A]">
+    <div className="min-h-screen bg-[var(--color-bg-main)]">
       {/* ======================== NAVIGATION ======================== */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#08080A]/95 backdrop-blur-md shadow-lg shadow-black/30 border-b border-[#C4A03C]/20'
+            ? 'border-b border-[var(--color-primary)]/20 nav-scrolled-shadow'
             : 'bg-transparent'
         }`}
+        style={scrolled ? { backgroundColor: 'var(--color-nav-scrolled)', backdropFilter: 'blur(12px)' } : undefined}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
@@ -180,14 +181,14 @@ export default function Home() {
             >
               <span
                 className={`text-xl lg:text-2xl font-extrabold tracking-[0.25em] transition-colors ${
-                  scrolled ? 'text-[#C4A03C]' : 'text-white'
+                  scrolled ? 'text-[var(--color-primary)]' : 'text-[var(--color-hero-text)]'
                 }`}
               >
                 GABOOSE
               </span>
               <span
                 className={`text-xs lg:text-sm font-light tracking-[0.3em] uppercase transition-colors ${
-                  scrolled ? 'text-[#C4A03C]/70' : 'text-[#C4A03C]'
+                  scrolled ? 'text-[var(--color-primary)]/70' : 'text-[var(--color-primary)]'
                 }`}
               >
                 HOTEL
@@ -203,10 +204,10 @@ export default function Home() {
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     activeSection === link.href.slice(1)
                       ? scrolled
-                        ? 'bg-[#C4A03C] text-[#08080A]'
-                        : 'bg-white/20 text-white'
+                        ? 'bg-[var(--color-primary)] text-[var(--color-bg-main)]'
+                        : 'bg-white/20 text-[var(--color-hero-text)]'
                       : scrolled
-                        ? 'text-[#B8B0A4] hover:text-[#C4A03C] hover:bg-[#C4A03C]/10'
+                        ? 'text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
                         : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -216,14 +217,14 @@ export default function Home() {
               {/* Language Toggle */}
               <button
                 onClick={toggleLanguage}
-                className="ml-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-[#C4A03C]/30 text-[#C4A03C] hover:bg-[#C4A03C]/10"
+                className="ml-2 px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 border border-[var(--color-primary)]/30 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
               >
                 <Globe className="h-4 w-4 inline mr-1" />
                 {lang === 'en' ? 'SO' : 'EN'}
               </button>
               <Button
                 onClick={() => setBookingOpen(true)}
-                className="ml-3 bg-[#C4A03C] hover:bg-[#D4B050] text-[#08080A] rounded-full px-5 font-semibold"
+                className="ml-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-bg-main)] rounded-full px-5 font-semibold"
                 size="sm"
               >
                 <Calendar className="h-4 w-4 mr-1.5" />
@@ -238,16 +239,16 @@ export default function Home() {
                   <button
                     className={`p-2 rounded-lg transition-colors ${
                       scrolled
-                        ? 'text-[#C4A03C] hover:bg-[#C4A03C]/10'
-                        : 'text-white hover:bg-white/10'
+                        ? 'text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10'
+                        : 'text-[var(--color-hero-text)] hover:bg-white/10'
                     }`}
                   >
                     <Menu className="h-6 w-6" />
                   </button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 bg-[#0F0F12] border-[#C4A03C]/20">
+                <SheetContent side="right" className="w-72 bg-[var(--color-bg-card)] border-[var(--color-primary)]/20">
                   <SheetHeader>
-                    <SheetTitle className="text-[#C4A03C] text-lg">
+                    <SheetTitle className="text-[var(--color-primary)] text-lg">
                       GABOOSE HOTEL
                     </SheetTitle>
                   </SheetHeader>
@@ -256,18 +257,18 @@ export default function Home() {
                       <SheetClose asChild key={link.href}>
                         <button
                           onClick={() => scrollToSection(link.href)}
-                          className="flex items-center px-4 py-3 rounded-lg text-[#B8B0A4] hover:bg-[#C4A03C]/10 hover:text-[#C4A03C] font-medium transition-colors text-left"
+                          className="flex items-center px-4 py-3 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)] font-medium transition-colors text-left"
                         >
                           {t(link.labelKey)}
                         </button>
                       </SheetClose>
                     ))}
-                    <Separator className="my-2 bg-[#1E1E24]" />
+                    <Separator className="my-2 bg-[var(--color-border)]" />
                     {/* Mobile Language Toggle */}
                     <SheetClose asChild>
                       <button
                         onClick={toggleLanguage}
-                        className="mx-4 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 border border-[#C4A03C]/30 text-[#C4A03C] hover:bg-[#C4A03C]/10"
+                        className="mx-4 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 border border-[var(--color-primary)]/30 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
                       >
                         <Globe className="h-4 w-4" />
                         {lang === 'en' ? 'SO' : 'EN'}
@@ -276,7 +277,7 @@ export default function Home() {
                     <SheetClose asChild>
                       <Button
                         onClick={() => setBookingOpen(true)}
-                        className="bg-[#C4A03C] hover:bg-[#D4B050] text-[#08080A] mx-4 font-semibold"
+                        className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-bg-main)] mx-4 font-semibold"
                       >
                         <Calendar className="h-4 w-4 mr-2" />
                         {t('nav.bookNow')}
@@ -302,7 +303,7 @@ export default function Home() {
             priority
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#08080A]" />
+          <div className="absolute inset-0 hero-overlay-gradient" style={{ background: 'linear-gradient(to bottom, var(--color-hero-gradient-from), var(--color-hero-gradient-via), var(--color-hero-gradient-to))' }} />
         </div>
 
         {/* Content */}
@@ -312,19 +313,20 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className={`text-5xl sm:text-6xl md:text-8xl font-extrabold text-white mb-4 leading-[1.05] tracking-tight ${lang === 'so' ? 'sm:text-4xl md:text-6xl lg:text-7xl' : ''}`}>
+            <h1 className={`text-5xl sm:text-6xl md:text-8xl font-extrabold mb-4 leading-[1.05] tracking-tight ${lang === 'so' ? 'sm:text-4xl md:text-6xl lg:text-7xl' : ''}`} style={{ color: 'var(--color-hero-text)' }}>
               {t('hero.title')}{' '}
-              <span className="text-[#C4A03C]">{t('hero.brand')}</span>{' '}
+              <span className="text-[var(--color-primary)]">{t('hero.brand')}</span>{' '}
               {t('hero.subtitle')}
             </h1>
-            <p className="text-lg sm:text-xl text-white/70 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-lg sm:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed" style={{ color: 'var(--color-hero-text-sub)' }}>
               {t('hero.desc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 onClick={() => setBookingOpen(true)}
                 size="lg"
-                className="bg-[#C4A03C] hover:bg-[#D4B050] text-[#08080A] text-base px-8 py-6 rounded-full shadow-lg shadow-[#C4A03C]/20 font-semibold"
+                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-bg-main)] text-base px-8 py-6 rounded-full font-semibold"
+                style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 {t('hero.bookNow')}
@@ -333,7 +335,7 @@ export default function Home() {
                 onClick={() => scrollToSection('#rooms')}
                 variant="outline"
                 size="lg"
-                className="border-[#C4A03C]/60 text-[#C4A03C] hover:bg-[#C4A03C] hover:text-[#08080A] hover:border-[#C4A03C] text-base px-8 py-6 rounded-full backdrop-blur-sm transition-all duration-300 font-semibold"
+                className="border-[var(--color-primary)]/60 text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-bg-main)] hover:border-[var(--color-primary)] text-base px-8 py-6 rounded-full backdrop-blur-sm transition-all duration-300 font-semibold"
               >
                 {t('hero.viewRooms')}
               </Button>
@@ -348,10 +350,11 @@ export default function Home() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-2 text-white/80 text-sm"
+                  className="flex items-center gap-2 text-sm"
+                  style={{ color: 'var(--color-hero-text-icon)' }}
                 >
-                  <span className="text-[#C4A03C]">{item.icon}</span>
-                  <span className="text-white/60">{item.text}</span>
+                  <span className="text-[var(--color-primary)]">{item.icon}</span>
+                  <span style={{ color: 'var(--color-hero-text-stat)' }}>{item.text}</span>
                 </div>
               ))}
             </div>
@@ -371,15 +374,15 @@ export default function Home() {
       </section>
 
       {/* ======================== ABOUT SECTION ======================== */}
-      <section className="py-20 lg:py-28 bg-[#0C0C0F]">
+      <section className="py-20 lg:py-28 bg-[var(--color-bg-section)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <div className="text-center mb-16">
-              <Badge className="bg-[#C4A03C]/15 text-[#C4A03C] border-[#C4A03C]/30 mb-4">{t('about.badge')}</Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <Badge className="bg-[var(--color-primary)]/15 text-[var(--color-primary)] border-[var(--color-primary)]/30 mb-4">{t('about.badge')}</Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                 {t('about.title')}
               </h2>
-              <p className="text-[#A09890] text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl mx-auto">
                 {t('about.desc')}
               </p>
             </div>
@@ -404,15 +407,15 @@ export default function Home() {
               },
             ].map((feature, index) => (
               <FadeInSection key={feature.title} delay={index * 0.15}>
-                <Card className="text-center border-[#1E1E24] bg-[#111114] hover:border-[#C4A03C]/50 hover:shadow-lg hover:shadow-[#C4A03C]/5 transition-all duration-300 py-0 gap-0 h-full">
+                <Card className="text-center border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-primary)]/50 hover:shadow-lg transition-all duration-300 py-0 gap-0 h-full" style={{ '--tw-shadow-color': 'var(--color-primary)' } as React.CSSProperties}>
                   <CardContent className="pt-8 pb-6 px-6 flex flex-col items-center">
-                    <div className="w-16 h-16 rounded-full bg-[#C4A03C]/15 flex items-center justify-center mb-4 text-[#C4A03C]">
+                    <div className="w-16 h-16 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center mb-4 text-[var(--color-primary)]">
                       {feature.icon}
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3">
+                    <h3 className="text-xl font-bold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                       {feature.title}
                     </h3>
-                    <p className="text-[#A09890] leading-relaxed">
+                    <p className="text-[var(--color-text-secondary)] leading-relaxed">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -424,15 +427,15 @@ export default function Home() {
       </section>
 
       {/* ======================== ROOMS SECTION ======================== */}
-      <section id="rooms" className="py-20 lg:py-28 bg-[#08080A]">
+      <section id="rooms" className="py-20 lg:py-28 bg-[var(--color-bg-main)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <div className="text-center mb-16">
-              <Badge className="bg-[#C4A03C]/15 text-[#C4A03C] border-[#C4A03C]/30 mb-4">{t('rooms.badge')}</Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <Badge className="bg-[var(--color-primary)]/15 text-[var(--color-primary)] border-[var(--color-primary)]/30 mb-4">{t('rooms.badge')}</Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                 {t('rooms.title')}
               </h2>
-              <p className="text-[#A09890] text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl mx-auto">
                 {t('rooms.desc')}
               </p>
             </div>
@@ -443,18 +446,18 @@ export default function Home() {
       </section>
 
       {/* ======================== RESTAURANT SECTION ======================== */}
-      <section id="restaurant" className="py-20 lg:py-28 bg-[#0C0C0F]">
+      <section id="restaurant" className="py-20 lg:py-28 bg-[var(--color-bg-section)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <div className="text-center mb-16">
-              <Badge className="bg-[#C4A03C]/15 text-[#C4A03C] border-[#C4A03C]/30 mb-4">
+              <Badge className="bg-[var(--color-primary)]/15 text-[var(--color-primary)] border-[var(--color-primary)]/30 mb-4">
                 <Coffee className="h-3 w-3 mr-1" />
                 {t('restaurant.badge')}
               </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                 {t('restaurant.title')}
               </h2>
-              <p className="text-[#A09890] text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl mx-auto">
                 {t('restaurant.desc')}
               </p>
             </div>
@@ -472,9 +475,9 @@ export default function Home() {
                   sizes="(max-width: 1280px) 100vw, 1280px"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-6 left-6 text-white">
+                <div className="absolute bottom-6 left-6" style={{ color: 'var(--color-hero-text)' }}>
                   <h3 className="text-2xl font-bold">{t('restaurant.name')}</h3>
-                  <p className="text-white/70">{t('restaurant.open')}</p>
+                  <p className="opacity-70">{t('restaurant.open')}</p>
                 </div>
               </div>
             </div>
@@ -483,17 +486,17 @@ export default function Home() {
           {/* Menu Tabs */}
           <FadeInSection>
             <Tabs defaultValue="breakfast" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8 bg-[#111114] p-1 rounded-lg h-auto border border-[#1E1E24]">
+              <TabsList className="grid w-full grid-cols-2 mb-8 bg-[var(--color-bg-card)] p-1 rounded-lg h-auto border border-[var(--color-border)]">
                 <TabsTrigger
                   value="breakfast"
-                  className="py-3 text-base font-medium data-[state=active]:bg-[#C4A03C] data-[state=active]:text-[#08080A] rounded-md text-[#A09890] data-[state=inactive]:hover:text-white"
+                  className="py-3 text-base font-medium data-[state=active]:bg-[var(--color-primary)] data-[state=active]:text-[var(--color-bg-main)] rounded-md text-[var(--color-text-secondary)] data-[state=inactive]:hover:text-[var(--color-text-primary)]"
                 >
                   <Coffee className="h-4 w-4 mr-2" />
                   {t('menu.breakfast')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="drinks"
-                  className="py-3 text-base font-medium data-[state=active]:bg-[#C4A03C] data-[state=active]:text-[#08080A] rounded-md text-[#A09890] data-[state=inactive]:hover:text-white"
+                  className="py-3 text-base font-medium data-[state=active]:bg-[var(--color-primary)] data-[state=active]:text-[var(--color-bg-main)] rounded-md text-[var(--color-text-secondary)] data-[state=inactive]:hover:text-[var(--color-text-primary)]"
                 >
                   {t('menu.breakfastDrinks')}
                 </TabsTrigger>
@@ -542,13 +545,13 @@ export default function Home() {
                     ].map((item) => (
                       <div
                         key={item.name}
-                        className="flex justify-between items-start p-4 bg-[#111114] rounded-lg hover:bg-[#17171B] border border-[#1E1E24] transition-colors"
+                        className="flex justify-between items-start p-4 bg-[var(--color-bg-card)] rounded-lg hover:bg-[var(--color-card-hover)] border border-[var(--color-border)] transition-colors"
                       >
                         <div>
-                          <h4 className="font-semibold text-white">{item.name}</h4>
-                          <p className="text-sm text-[#A09890]">{item.desc}</p>
+                          <h4 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{item.name}</h4>
+                          <p className="text-sm text-[var(--color-text-secondary)]">{item.desc}</p>
                         </div>
-                        <Badge className="bg-[#C4A03C] text-[#08080A] shrink-0 ml-3 font-semibold">
+                        <Badge className="bg-[var(--color-primary)] text-[var(--color-bg-main)] shrink-0 ml-3 font-semibold">
                           {item.price}
                         </Badge>
                       </div>
@@ -581,13 +584,13 @@ export default function Home() {
                     ].map((item) => (
                       <div
                         key={item.name}
-                        className="flex justify-between items-center p-4 bg-[#111114] rounded-lg hover:bg-[#17171B] border border-[#1E1E24] transition-colors"
+                        className="flex justify-between items-center p-4 bg-[var(--color-bg-card)] rounded-lg hover:bg-[var(--color-card-hover)] border border-[var(--color-border)] transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <Check className="h-4 w-4 text-[#C4A03C] shrink-0" />
-                          <span className="font-medium text-white">{item.name}</span>
+                          <Check className="h-4 w-4 text-[var(--color-primary)] shrink-0" />
+                          <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{item.name}</span>
                         </div>
-                        <Badge className="bg-[#C4A03C] text-[#08080A] shrink-0 ml-3 font-semibold">
+                        <Badge className="bg-[var(--color-primary)] text-[var(--color-bg-main)] shrink-0 ml-3 font-semibold">
                           {item.price}
                         </Badge>
                       </div>
@@ -601,15 +604,15 @@ export default function Home() {
       </section>
 
       {/* ======================== GALLERY SECTION ======================== */}
-      <section id="gallery" className="py-20 lg:py-28 bg-[#08080A]">
+      <section id="gallery" className="py-20 lg:py-28 bg-[var(--color-bg-main)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <div className="text-center mb-16">
-              <Badge className="bg-[#C4A03C]/15 text-[#C4A03C] border-[#C4A03C]/30 mb-4">{t('gallery.badge')}</Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <Badge className="bg-[var(--color-primary)]/15 text-[var(--color-primary)] border-[var(--color-primary)]/30 mb-4">{t('gallery.badge')}</Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                 {t('gallery.title')}
               </h2>
-              <p className="text-[#A09890] text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl mx-auto">
                 {t('gallery.desc')}
               </p>
             </div>
@@ -620,15 +623,15 @@ export default function Home() {
       </section>
 
       {/* ======================== CONTACT SECTION ======================== */}
-      <section id="contact" className="py-20 lg:py-28 bg-[#0C0C0F]">
+      <section id="contact" className="py-20 lg:py-28 bg-[var(--color-bg-section)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInSection>
             <div className="text-center mb-16">
-              <Badge className="bg-[#C4A03C]/15 text-[#C4A03C] border-[#C4A03C]/30 mb-4">{t('contact.badge')}</Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <Badge className="bg-[var(--color-primary)]/15 text-[var(--color-primary)] border-[var(--color-primary)]/30 mb-4">{t('contact.badge')}</Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                 {t('contact.title')}
               </h2>
-              <p className="text-[#A09890] text-lg max-w-2xl mx-auto">
+              <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl mx-auto">
                 {t('contact.desc')}
               </p>
             </div>
@@ -637,12 +640,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <FadeInSection>
-              <Card className="border-[#1E1E24] bg-[#111114] py-0 gap-0">
+              <Card className="border-[var(--color-border)] bg-[var(--color-bg-card)] py-0 gap-0">
                 <CardContent className="p-6 lg:p-8">
-                  <h3 className="text-xl font-bold text-[#C4A03C] mb-6">{t('contact.sendMsg')}</h3>
+                  <h3 className="text-xl font-bold text-[var(--color-primary)] mb-6">{t('contact.sendMsg')}</h3>
                   <form onSubmit={handleContactSubmit} className="space-y-4">
                     <div>
-                      <Label htmlFor="contact-name" className="text-[#B8B0A4]">{t('contact.form.name')}</Label>
+                      <Label htmlFor="contact-name" className="text-[var(--color-text-muted)]">{t('contact.form.name')}</Label>
                       <Input
                         id="contact-name"
                         value={contactForm.name}
@@ -651,12 +654,13 @@ export default function Home() {
                         }
                         placeholder={t('contact.namePlaceholder')}
                         required
-                        className="mt-1 bg-[#08080A] border-[#1E1E24] text-white placeholder:text-[#5A5650] focus:border-[#C4A03C]/50"
+                        className="mt-1 bg-[var(--color-bg-input)] border-[var(--color-border)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)]/50"
+                        style={{ color: 'var(--color-text-primary)' }}
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="contact-email" className="text-[#B8B0A4]">{t('contact.form.email')}</Label>
+                        <Label htmlFor="contact-email" className="text-[var(--color-text-muted)]">{t('contact.form.email')}</Label>
                         <Input
                           id="contact-email"
                           type="email"
@@ -666,11 +670,12 @@ export default function Home() {
                           }
                           placeholder={t('contact.emailPlaceholder')}
                           required
-                          className="mt-1 bg-[#08080A] border-[#1E1E24] text-white placeholder:text-[#5A5650] focus:border-[#C4A03C]/50"
+                          className="mt-1 bg-[var(--color-bg-input)] border-[var(--color-border)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)]/50"
+                          style={{ color: 'var(--color-text-primary)' }}
                         />
                       </div>
                       <div>
-                        <Label htmlFor="contact-phone" className="text-[#B8B0A4]">{t('contact.form.phone')}</Label>
+                        <Label htmlFor="contact-phone" className="text-[var(--color-text-muted)]">{t('contact.form.phone')}</Label>
                         <Input
                           id="contact-phone"
                           type="tel"
@@ -679,12 +684,13 @@ export default function Home() {
                             setContactForm((p) => ({ ...p, phone: e.target.value }))
                           }
                           placeholder={t('contact.phonePlaceholder')}
-                          className="mt-1 bg-[#08080A] border-[#1E1E24] text-white placeholder:text-[#5A5650] focus:border-[#C4A03C]/50"
+                          className="mt-1 bg-[var(--color-bg-input)] border-[var(--color-border)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)]/50"
+                          style={{ color: 'var(--color-text-primary)' }}
                         />
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="contact-message" className="text-[#B8B0A4]">{t('contact.form.message')}</Label>
+                      <Label htmlFor="contact-message" className="text-[var(--color-text-muted)]">{t('contact.form.message')}</Label>
                       <Textarea
                         id="contact-message"
                         value={contactForm.message}
@@ -693,13 +699,14 @@ export default function Home() {
                         }
                         placeholder={t('contact.messagePlaceholder')}
                         required
-                        className="mt-1 bg-[#08080A] border-[#1E1E24] text-white placeholder:text-[#5A5650] focus:border-[#C4A03C]/50"
+                        className="mt-1 bg-[var(--color-bg-input)] border-[var(--color-border)] placeholder:text-[var(--color-text-placeholder)] focus:border-[var(--color-primary)]/50"
                         rows={5}
+                        style={{ color: 'var(--color-text-primary)' }}
                       />
                     </div>
                     <Button
                       type="submit"
-                      className="w-full bg-[#C4A03C] hover:bg-[#D4B050] text-[#08080A] py-5 font-semibold"
+                      className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-bg-main)] py-5 font-semibold"
                       disabled={contactSubmitting}
                     >
                       {contactSubmitting ? (
@@ -720,31 +727,31 @@ export default function Home() {
             <FadeInSection delay={0.15}>
               <div className="space-y-6">
                 {/* Contact Details */}
-                <Card className="border-[#1E1E24] bg-[#111114] py-0 gap-0">
+                <Card className="border-[var(--color-border)] bg-[var(--color-bg-card)] py-0 gap-0">
                   <CardContent className="p-6 lg:p-8 space-y-5">
-                    <h3 className="text-xl font-bold text-[#C4A03C] mb-2">{t('contact.info')}</h3>
+                    <h3 className="text-xl font-bold text-[var(--color-primary)] mb-2">{t('contact.info')}</h3>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#C4A03C]/15 flex items-center justify-center shrink-0">
-                        <MapPin className="h-5 w-5 text-[#C4A03C]" />
+                      <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5 text-[var(--color-primary)]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{t('contact.address')}</p>
-                        <p className="text-sm text-[#A09890] whitespace-pre-line">
+                        <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.address')}</p>
+                        <p className="text-sm text-[var(--color-text-secondary)] whitespace-pre-line">
                           {t('contact.addressVal')}
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#C4A03C]/15 flex items-center justify-center shrink-0">
-                        <Phone className="h-5 w-5 text-[#C4A03C]" />
+                      <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center shrink-0">
+                        <Phone className="h-5 w-5 text-[var(--color-primary)]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{t('contact.phone')}</p>
+                        <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.phone')}</p>
                         <a
                           href="tel:+251915210607"
-                          className="text-sm text-[#C4A03C] hover:underline"
+                          className="text-sm text-[var(--color-primary)] hover:underline"
                         >
                           +251 91 521 0607
                         </a>
@@ -752,14 +759,14 @@ export default function Home() {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#C4A03C]/15 flex items-center justify-center shrink-0">
-                        <Mail className="h-5 w-5 text-[#C4A03C]" />
+                      <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center shrink-0">
+                        <Mail className="h-5 w-5 text-[var(--color-primary)]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{t('contact.email')}</p>
+                        <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.email')}</p>
                         <a
                           href="mailto:gaboose-hotel1@hotmail.com"
-                          className="text-sm text-[#C4A03C] hover:underline"
+                          className="text-sm text-[var(--color-primary)] hover:underline"
                         >
                           gaboose-hotel1@hotmail.com
                         </a>
@@ -767,19 +774,19 @@ export default function Home() {
                     </div>
 
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#C4A03C]/15 flex items-center justify-center shrink-0">
-                        <Clock className="h-5 w-5 text-[#C4A03C]" />
+                      <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center shrink-0">
+                        <Clock className="h-5 w-5 text-[var(--color-primary)]" />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{t('contact.hours')}</p>
-                        <p className="text-sm text-[#A09890]">{t('contact.hoursVal')}</p>
+                        <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.hours')}</p>
+                        <p className="text-sm text-[var(--color-text-secondary)]">{t('contact.hoursVal')}</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Google Maps */}
-                <Card className="border-[#1E1E24] bg-[#111114] overflow-hidden py-0 gap-0">
+                <Card className="border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden py-0 gap-0">
                   <div className="aspect-video w-full">
                     <iframe
                       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3191.0!2d44.2813788!3d6.7318303!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2s6.7318303%2C44.2813788!5e0!3m2!1sen!2set!4v1700000000000!5m2!1sen!2set"
@@ -800,26 +807,27 @@ export default function Home() {
       </section>
 
       {/* ======================== FOOTER ======================== */}
-      <footer className="bg-[#060608] border-t border-[#111114]">
+      <footer className="bg-[var(--color-footer)] border-t border-[var(--color-bg-card)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Brand */}
             <div>
-              <h3 className="text-2xl font-bold text-[#C4A03C] mb-2 tracking-[0.2em]">{t('footer.brand')}</h3>
-              <p className="text-sm text-[#706B62] leading-relaxed">
+              <h3 className="text-2xl font-bold text-[var(--color-primary)] mb-2 tracking-[0.2em]">{t('footer.brand')}</h3>
+              <p className="text-sm footer-text-muted leading-relaxed" style={{ color: 'var(--color-footer-text)' }}>
                 {t('footer.desc')}
               </p>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
+              <h4 className="font-semibold mb-4" style={{ color: 'var(--color-hero-text)' }}>{t('footer.quickLinks')}</h4>
               <nav className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <button
                     key={link.href}
                     onClick={() => scrollToSection(link.href)}
-                    className="text-sm text-[#706B62] hover:text-[#C4A03C] transition-colors text-left"
+                    className="text-sm footer-text-muted hover:text-[var(--color-primary)] transition-colors text-left"
+                    style={{ color: 'var(--color-footer-text)' }}
                   >
                     {t(link.labelKey)}
                   </button>
@@ -829,18 +837,18 @@ export default function Home() {
 
             {/* Contact */}
             <div>
-              <h4 className="text-white font-semibold mb-4">{t('footer.contactUs')}</h4>
-              <div className="space-y-2 text-sm text-[#706B62]">
+              <h4 className="font-semibold mb-4" style={{ color: 'var(--color-hero-text)' }}>{t('footer.contactUs')}</h4>
+              <div className="space-y-2 text-sm" style={{ color: 'var(--color-footer-text)' }}>
                 <a
                   href="tel:+251915210607"
-                  className="flex items-center gap-2 hover:text-[#C4A03C] transition-colors"
+                  className="flex items-center gap-2 hover:text-[var(--color-primary)] transition-colors"
                 >
                   <Phone className="h-4 w-4" />
                   +251 91 521 0607
                 </a>
                 <a
                   href="mailto:gaboose-hotel1@hotmail.com"
-                  className="flex items-center gap-2 hover:text-[#C4A03C] transition-colors"
+                  className="flex items-center gap-2 hover:text-[var(--color-primary)] transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   gaboose-hotel1@hotmail.com
@@ -855,13 +863,15 @@ export default function Home() {
               <div className="flex gap-3 mt-5">
                 <a
                   href="#"
-                  className="w-9 h-9 rounded-full bg-[#111114] border border-[#1E1E24] hover:bg-[#C4A03C] hover:border-[#C4A03C] flex items-center justify-center transition-all text-[#706B62] hover:text-[#08080A]"
+                  className="w-9 h-9 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] flex items-center justify-center transition-all hover:text-[var(--color-social-hover-text)]"
+                  style={{ color: 'var(--color-social-text)' }}
                 >
                   <Facebook className="h-4 w-4" />
                 </a>
                 <a
                   href="#"
-                  className="w-9 h-9 rounded-full bg-[#111114] border border-[#1E1E24] hover:bg-[#C4A03C] hover:border-[#C4A03C] flex items-center justify-center transition-all text-[#706B62] hover:text-[#08080A]"
+                  className="w-9 h-9 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] flex items-center justify-center transition-all hover:text-[var(--color-social-hover-text)]"
+                  style={{ color: 'var(--color-social-text)' }}
                 >
                   <Instagram className="h-4 w-4" />
                 </a>
@@ -869,9 +879,9 @@ export default function Home() {
             </div>
           </div>
 
-          <Separator className="my-8 bg-[#111114]" />
+          <Separator className="my-8 bg-[var(--color-bg-card)]" />
 
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-[#4A4640]">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm footer-text-muted" style={{ color: 'var(--color-footer-text)', opacity: 0.6 }}>
             <p>&copy; {new Date().getFullYear()} {t('footer.copyright')}</p>
             <p>{t('footer.location')}</p>
           </div>
@@ -893,7 +903,7 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[#C4A03C] hover:bg-[#D4B050] text-[#08080A] shadow-lg shadow-[#C4A03C]/20 flex items-center justify-center transition-colors"
+          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-bg-main)] flex items-center justify-center transition-colors btn-back-to-top"
         >
           <ChevronUp className="h-5 w-5" />
         </motion.button>

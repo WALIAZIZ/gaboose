@@ -150,5 +150,5 @@ model PaymentProof {
   verifiedBy  String?
   verifiedAt  DateTime?
   notes       String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
 }

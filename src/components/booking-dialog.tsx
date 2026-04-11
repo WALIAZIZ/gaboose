@@ -24,7 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar as CalendarPicker } from '@/components/ui/calendar'
-import { CalendarDays, Users, Loader2, CheckCircle2, CreditCard } from 'lucide-react'
+import { CalendarDays, Loader2, CheckCircle2, CreditCard } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { rooms } from './room-card'
@@ -219,7 +219,7 @@ export function BookingDialog({
                           {formData.checkIn ? format(new Date(formData.checkIn), 'PPP') : t('booking.checkin')}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" style={{ backgroundColor: '#111114', border: '1px solid #1E1E24' }}>
+                      <PopoverContent className="w-auto p-3" style={{ backgroundColor: '#111114', border: '1px solid #2A2A30', borderRadius: '12px' }}>
                         <CalendarPicker
                           mode="single"
                           selected={formData.checkIn ? new Date(formData.checkIn) : undefined}
@@ -235,13 +235,24 @@ export function BookingDialog({
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           className="bg-transparent"
                           classNames={{
-                            day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050]',
-                            day_today: 'text-[#C4A03C] font-bold',
-                            day_outside: 'text-[#5A5650]',
-                            button_previous: 'text-[#A09890] hover:text-[#C4A03C] hover:bg-[#C4A03C]/10',
-                            button_next: 'text-[#A09890] hover:text-[#C4A03C] hover:bg-[#C4A03C]/10',
-                            caption_label: 'text-[#fff]',
-                            weekday: 'text-[#A09890]',
+                            day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050] rounded-md',
+                            day_today: 'bg-[#C4A03C]/20 text-[#C4A03C] font-bold ring-1 ring-[#C4A03C]/50 rounded-md',
+                            day_outside: 'text-[#3A3630] opacity-50',
+                            day_disabled: 'text-[#3A3630] opacity-30 line-through',
+                            day_hidden: 'invisible',
+                            day: 'text-[#E8E0D8] hover:bg-[#1E1E24] rounded-md transition-colors w-8 h-8 font-medium',
+                            button_previous: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            button_next: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            caption_label: 'text-[#fff] font-semibold',
+                            caption: 'pb-2 pt-1',
+                            nav: 'space-x-4',
+                            weekday: 'text-[#C4A03C]/70 text-xs font-medium uppercase',
+                            month: 'space-y-2',
+                            table: 'w-full border-collapse space-y-1',
+                            head_row: 'flex',
+                            head_cell: 'text-[#C4A03C]/70 rounded-md w-8 font-normal text-xs',
+                            row: 'flex w-full mt-0',
+                            cell: 'text-center p-0 relative h-8 w-8',
                             range_middle: 'bg-[#C4A03C]/20',
                             range_start: 'bg-[#C4A03C] text-[#08080A] rounded-l-md',
                             range_end: 'bg-[#C4A03C] text-[#08080A] rounded-r-md',
@@ -263,7 +274,7 @@ export function BookingDialog({
                           {formData.checkOut ? format(new Date(formData.checkOut), 'PPP') : t('booking.checkout')}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" style={{ backgroundColor: '#111114', border: '1px solid #1E1E24' }}>
+                      <PopoverContent className="w-auto p-3" style={{ backgroundColor: '#111114', border: '1px solid #2A2A30', borderRadius: '12px' }}>
                         <CalendarPicker
                           mode="single"
                           selected={formData.checkOut ? new Date(formData.checkOut) : undefined}
@@ -280,13 +291,24 @@ export function BookingDialog({
                           }}
                           className="bg-transparent"
                           classNames={{
-                            day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050]',
-                            day_today: 'text-[#C4A03C] font-bold',
-                            day_outside: 'text-[#5A5650]',
-                            button_previous: 'text-[#A09890] hover:text-[#C4A03C] hover:bg-[#C4A03C]/10',
-                            button_next: 'text-[#A09890] hover:text-[#C4A03C] hover:bg-[#C4A03C]/10',
-                            caption_label: 'text-[#fff]',
-                            weekday: 'text-[#A09890]',
+                            day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050] rounded-md',
+                            day_today: 'bg-[#C4A03C]/20 text-[#C4A03C] font-bold ring-1 ring-[#C4A03C]/50 rounded-md',
+                            day_outside: 'text-[#3A3630] opacity-50',
+                            day_disabled: 'text-[#3A3630] opacity-30 line-through',
+                            day_hidden: 'invisible',
+                            day: 'text-[#E8E0D8] hover:bg-[#1E1E24] rounded-md transition-colors w-8 h-8 font-medium',
+                            button_previous: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            button_next: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            caption_label: 'text-[#fff] font-semibold',
+                            caption: 'pb-2 pt-1',
+                            nav: 'space-x-4',
+                            weekday: 'text-[#C4A03C]/70 text-xs font-medium uppercase',
+                            month: 'space-y-2',
+                            table: 'w-full border-collapse space-y-1',
+                            head_row: 'flex',
+                            head_cell: 'text-[#C4A03C]/70 rounded-md w-8 font-normal text-xs',
+                            row: 'flex w-full mt-0',
+                            cell: 'text-center p-0 relative h-8 w-8',
                             range_middle: 'bg-[#C4A03C]/20',
                             range_start: 'bg-[#C4A03C] text-[#08080A] rounded-l-md',
                             range_end: 'bg-[#C4A03C] text-[#08080A] rounded-r-md',
@@ -296,26 +318,7 @@ export function BookingDialog({
                     </Popover>
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="booking-guests" className="flex items-center gap-1 text-[#B8B0A4]">
-                    <Users className="h-3.5 w-3.5" /> {t('booking.guests')}
-                  </Label>
-                  <Select
-                    value={String(formData.guests)}
-                    onValueChange={(value) => handleChange('guests', parseInt(value))}
-                  >
-                    <SelectTrigger className="w-full mt-1 bg-[#08080A] border-[#1E1E24] text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5, 6].map((n) => (
-                        <SelectItem key={n} value={String(n)}>
-                          {n} {n === 1 ? t('booking.guest') : t('booking.guestsCount')}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+
               </div>
 
               {/* Special Requests */}

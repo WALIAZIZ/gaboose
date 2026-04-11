@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react'
 
 type Language = 'en' | 'so'
 
@@ -10,7 +10,7 @@ interface LanguageContextType {
   toggleLanguage: () => void
 }
 
-const translations: Record<string, Record<string, string>> = {
+export const translations: Record<string, Record<string, string>> = {
   en: {
     'nav.home': 'Home',
     'nav.rooms': 'Rooms',
@@ -259,14 +259,66 @@ const translations: Record<string, Record<string, string>> = {
   },
 }
 
+// Section groupings for the translation editor
+export const translationSections = [
+  { id: 'nav', label: 'Navigation' },
+  { id: 'hero', label: 'Hero' },
+  { id: 'about', label: 'About' },
+  { id: 'rooms', label: 'Rooms' },
+  { id: 'restaurant', label: 'Restaurant' },
+  { id: 'menu', label: 'Menu' },
+  { id: 'gallery', label: 'Gallery' },
+  { id: 'contact', label: 'Contact' },
+  { id: 'booking', label: 'Booking' },
+  { id: 'footer', label: 'Footer' },
+  { id: 'toast', label: 'Toast Messages' },
+]
+
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Language>('en')
+  const [customTranslations, setCustomTranslations] = useState<Record<string, string>>({})
+  const customLoaded = useRef(false)
+
+  // Fetch custom translations from database on mount
+  useEffect(() => {
+    if (customLoaded.current) return
+    customLoaded.current = true
+
+    async function fetchCustomTranslations() {
+      try {
+        const res = await fetch('/api/site-content/translations?prefix=lang.so.')
+        if (res.ok) {
+          const data: Array<{ key: string; value: string; valueSo: string }> = await res.json()
+          const overrides: Record<string, string> = {}
+          for (const item of data) {
+            // key format: "lang.so.nav.home" -> translation key: "nav.home"
+            if (item.key.startsWith('lang.so.')) {
+              const transKey = item.key.slice('lang.so.'.length)
+              if (item.valueSo) {
+                overrides[transKey] = item.valueSo
+              } else if (item.value) {
+                overrides[transKey] = item.value
+              }
+            }
+          }
+          setCustomTranslations(overrides)
+        }
+      } catch {
+        // Silently fail - use hardcoded translations
+      }
+    }
+    fetchCustomTranslations()
+  }, [])
 
   const t = useCallback((key: string): string => {
+    if (lang === 'so') {
+      // Check custom overrides first, then hardcoded
+      return customTranslations[key] || translations[lang]?.[key] || translations['en']?.[key] || key
+    }
     return translations[lang]?.[key] || translations['en']?.[key] || key
-  }, [lang])
+  }, [lang, customTranslations])
 
   const toggleLanguage = useCallback(() => {
     setLang(prev => prev === 'en' ? 'so' : 'en')

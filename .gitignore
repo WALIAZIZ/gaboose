@@ -52,3 +52,10 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Database files (local SQLite)
+db/
+
+# Upload directories (handled by Vercel Blob in production)
+public/upload/
+public/uploads/

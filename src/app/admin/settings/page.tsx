@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import {
   Shield, UserCog, Plus, Trash2, RefreshCw, Key, UserPlus, Users,
-  CreditCard, Building2, Globe, Save, Loader2, Phone
+  CreditCard, Building2, Globe, Save, Loader2, Phone, Palette, AlertTriangle
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -67,6 +67,12 @@ export default function SettingsPage() {
   const [paymentForm, setPaymentForm] = useState<PaymentForm>(defaultPaymentForm)
   const [savingPayment, setSavingPayment] = useState(false)
   const [paymentLoaded, setPaymentLoaded] = useState(false)
+  const [activeTheme, setActiveTheme] = useState('dark-gold')
+  const [themeLoaded, setThemeLoaded] = useState(false)
+  const [savingTheme, setSavingTheme] = useState(false)
+  const [showClearDialog, setShowClearDialog] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState('')
+  const [clearing, setClearing] = useState(false)
 
   const fetchAdmins = useCallback(async () => {
     try {
@@ -105,7 +111,44 @@ export default function SettingsPage() {
     finally { setPaymentLoaded(true) }
   }, [])
 
-  useEffect(() => { fetchAdmins(); fetchPaymentSettings() }, [fetchAdmins, fetchPaymentSettings])
+  const fetchTheme = useCallback(async () => {
+    try {
+      const res = await adminFetch('/api/admin/content?prefix=site')
+      if (res.ok) {
+        const data = await res.json()
+        const themeItem = data.find((item: { key: string }) => item.key === 'site.theme')
+        if (themeItem) setActiveTheme(themeItem.value)
+      }
+    } catch { /* use default */ }
+    finally { setThemeLoaded(true) }
+  }, [])
+
+  useEffect(() => { fetchAdmins(); fetchPaymentSettings(); fetchTheme() }, [fetchAdmins, fetchPaymentSettings, fetchTheme])
+
+  async function saveTheme(theme: string) {
+    setSavingTheme(true)
+    try {
+      await adminFetch('/api/admin/content', {
+        method: 'PUT',
+        body: JSON.stringify({ key: 'site.theme', value: theme, valueSo: theme }),
+      })
+
+      // Also apply to localStorage so it takes effect on the main site
+      localStorage.setItem('gaboose-theme', theme)
+
+      // Apply class to html element
+      const html = document.documentElement
+      html.classList.remove('theme-dark-gold', 'theme-maroon-white')
+      html.classList.add(`theme-${theme}`)
+
+      setActiveTheme(theme)
+      toast.success(`Theme set to ${theme === 'dark-gold' ? 'Dark + Gold' : 'Maroon + White'}`)
+    } catch {
+      toast.error('Failed to save theme')
+    } finally {
+      setSavingTheme(false)
+    }
+  }
 
   async function savePaymentSettings() {
     setSavingPayment(true)
@@ -215,6 +258,29 @@ export default function SettingsPage() {
     } catch { toast.error('Failed to update role') }
   }
 
+  async function handleClearData() {
+    if (deleteConfirm !== 'DELETE') {
+      toast.error('Please type DELETE to confirm')
+      return
+    }
+    setClearing(true)
+    try {
+      const res = await adminFetch('/api/admin/clear-data', { method: 'POST' })
+      if (res.ok) {
+        toast.success('All data cleared successfully')
+        setShowClearDialog(false)
+        setDeleteConfirm('')
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'Failed to clear data')
+      }
+    } catch {
+      toast.error('Failed to clear data')
+    } finally {
+      setClearing(false)
+    }
+  }
+
   function formatDate(d: string) {
     return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
   }
@@ -225,6 +291,98 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold" style={{ color: '#fff' }}>Settings</h1>
         <p className="text-sm mt-1" style={{ color: '#A09890' }}>Manage your account, admin users, and payment settings</p>
       </div>
+
+      {/* ========== THEME SELECTOR ========== */}
+      <Card style={cardStyle}>
+        <CardHeader>
+          <CardTitle className="text-base font-semibold flex items-center gap-2" style={{ color: '#fff' }}>
+            <Palette className="w-4 h-4" style={{ color: '#C4A03C' }} /> Color Theme
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!themeLoaded ? (
+            <Skeleton className="h-32 w-full" style={{ backgroundColor: '#08080A' }} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Dark + Gold */}
+              <button
+                onClick={() => saveTheme('dark-gold')}
+                disabled={savingTheme}
+                className="relative rounded-xl overflow-hidden border-2 transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  borderColor: activeTheme === 'dark-gold' ? '#C4A03C' : '#1E1E24',
+                  boxShadow: activeTheme === 'dark-gold' ? '0 0 0 2px rgba(196,160,60,0.3)' : 'none',
+                }}
+              >
+                <div className="p-4">
+                  <div className="flex gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#08080A', border: '1px solid #2A2A30' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#111114', border: '1px solid #2A2A30' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#0C0C0F', border: '1px solid #2A2A30' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#C4A03C' }} />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-2 flex-1 rounded-full" style={{ backgroundColor: '#08080A' }} />
+                    <div className="h-2 w-12 rounded-full" style={{ backgroundColor: '#C4A03C' }} />
+                  </div>
+                  <div className="h-2 w-24 rounded-full mb-1" style={{ backgroundColor: '#1E1E24' }} />
+                  <div className="h-2 w-16 rounded-full" style={{ backgroundColor: '#1E1E24' }} />
+                </div>
+                <div className="px-4 pb-3 flex items-center justify-between">
+                  <div className="text-left">
+                    <p className="text-sm font-semibold" style={{ color: '#fff' }}>Dark + Gold</p>
+                    <p className="text-xs" style={{ color: '#A09890' }}>Current default theme</p>
+                  </div>
+                  {activeTheme === 'dark-gold' && (
+                    <Badge style={{ backgroundColor: 'rgba(196,160,60,0.15)', color: '#C4A03C', border: '1px solid rgba(196,160,60,0.3)' }}>
+                      Active
+                    </Badge>
+                  )}
+                </div>
+              </button>
+
+              {/* Maroon + White */}
+              <button
+                onClick={() => saveTheme('maroon-white')}
+                disabled={savingTheme}
+                className="relative rounded-xl overflow-hidden border-2 transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  borderColor: activeTheme === 'maroon-white' ? '#800020' : '#1E1E24',
+                  boxShadow: activeTheme === 'maroon-white' ? '0 0 0 2px rgba(128,0,32,0.3)' : 'none',
+                }}
+              >
+                <div className="p-4">
+                  <div className="flex gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8DDD0' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#F9F5F0', border: '1px solid #E8DDD0' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#F5F0EB', border: '1px solid #E8DDD0' }} />
+                    <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#800020' }} />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="h-2 flex-1 rounded-full" style={{ backgroundColor: '#E8DDD0' }} />
+                    <div className="h-2 w-12 rounded-full" style={{ backgroundColor: '#800020' }} />
+                  </div>
+                  <div className="h-2 w-24 rounded-full mb-1" style={{ backgroundColor: '#E8DDD0' }} />
+                  <div className="h-2 w-16 rounded-full" style={{ backgroundColor: '#E8DDD0' }} />
+                </div>
+                <div className="px-4 pb-3 flex items-center justify-between">
+                  <div className="text-left">
+                    <p className="text-sm font-semibold" style={{ color: '#fff' }}>Maroon + White</p>
+                    <p className="text-xs" style={{ color: '#A09890' }}>Light maroon accent theme</p>
+                  </div>
+                  {activeTheme === 'maroon-white' && (
+                    <Badge style={{ backgroundColor: 'rgba(128,0,32,0.15)', color: '#E8747F', border: '1px solid rgba(128,0,32,0.3)' }}>
+                      Active
+                    </Badge>
+                  )}
+                </div>
+              </button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Separator style={{ backgroundColor: '#1E1E24' }} />
 
       {/* Payment Accounts */}
       <Card style={cardStyle}>
@@ -458,6 +616,87 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* ========== DANGER ZONE ========== */}
+      <Separator style={{ backgroundColor: '#1E1E24' }} />
+      <Card style={{ backgroundColor: '#111114', borderColor: 'rgba(239,68,68,0.3)' }}>
+        <CardHeader>
+          <CardTitle className="text-base font-semibold flex items-center gap-2" style={{ color: '#EF4444' }}>
+            <AlertTriangle className="w-4 h-4" /> Danger Zone
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+            <p className="text-sm mb-3" style={{ color: '#E8A0A0' }}>
+              This action permanently deletes ALL bookings, messages, rooms, menu items, gallery images, expenses, revenue, notes, and inventory items. 
+              Admin accounts and site settings (including translations, payment info, theme) will be kept.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => { setShowClearDialog(true); setDeleteConfirm('') }}
+              style={{ borderColor: 'rgba(239,68,68,0.5)', color: '#EF4444' }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear All Data
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Clear Data Confirmation Dialog */}
+      <Dialog open={showClearDialog} onOpenChange={(open) => { setShowClearDialog(open); if (!open) setDeleteConfirm('') }}>
+        <DialogContent style={{ backgroundColor: '#111114', borderColor: 'rgba(239,68,68,0.3)' }}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2" style={{ color: '#EF4444' }}>
+              <AlertTriangle className="w-5 h-5" />
+              Confirm Data Deletion
+            </DialogTitle>
+            <DialogDescription style={{ color: '#A09890' }}>
+              This will permanently delete ALL bookings, messages, rooms, menu items, gallery images, expenses, revenue, notes, and inventory. Admin accounts and settings will be kept.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-3 rounded-lg" style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+              <p className="text-sm font-medium mb-2" style={{ color: '#E8A0A0' }}>
+                Type <span className="font-mono font-bold text-[#EF4444]">DELETE</span> to confirm:
+              </p>
+              <Input
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                placeholder="Type DELETE here..."
+                style={{ backgroundColor: '#08080A', borderColor: deleteConfirm === 'DELETE' ? 'rgba(239,68,68,0.5)' : '#1E1E24', color: '#fff' }}
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleClearData}
+                disabled={deleteConfirm !== 'DELETE' || clearing}
+                className="flex-1"
+                style={{ backgroundColor: '#EF4444', color: '#fff', opacity: deleteConfirm === 'DELETE' ? 1 : 0.5 }}
+              >
+                {clearing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Clearing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Yes, Clear All Data
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => { setShowClearDialog(false); setDeleteConfirm('') }}
+                style={{ borderColor: '#1E1E24', color: '#A09890' }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add User Dialog */}
       <Dialog open={showAddUser} onOpenChange={setShowAddUser}>

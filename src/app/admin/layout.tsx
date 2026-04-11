@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import {
   Building2, LayoutDashboard, CalendarDays, BedDouble, UtensilsCrossed,
   ImageIcon, MessageSquare, DollarSign, FileText, StickyNote, Settings,
-  LogOut, Menu, X, ChevronRight, Shield, UserCog, Package
+  LogOut, Menu, X, ChevronRight, Shield, UserCog, Package, Languages
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +38,7 @@ const navItems = [
   { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
   { href: '/admin/finances', label: 'Finances', icon: DollarSign },
   { href: '/admin/content', label: 'Content', icon: FileText },
+  { href: '/admin/translations', label: 'Translations', icon: Languages },
   { href: '/admin/notes', label: 'Notes', icon: StickyNote },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]

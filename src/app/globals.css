@@ -219,3 +219,128 @@ body.font-somali {
 .rdp {
   --rdp-cell-size: 36px;
 }
+
+/* ============================================ */
+/* Theme System                                 */
+/* ============================================ */
+
+/* Default theme (dark-gold) - applied to html */
+html.theme-dark-gold {
+  --color-primary: #C4A03C;
+  --color-primary-hover: #D4B050;
+  --color-bg-main: #08080A;
+  --color-bg-section: #0C0C0F;
+  --color-bg-card: #111114;
+  --color-bg-input: #08080A;
+  --color-border: #1E1E24;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A09890;
+  --color-text-muted: #B8B0A4;
+  --color-text-placeholder: #5A5650;
+  --color-footer: #060608;
+  --color-hero-gradient-from: rgba(0, 0, 0, 0.6);
+  --color-hero-gradient-via: rgba(0, 0, 0, 0.4);
+  --color-hero-gradient-to: #08080A;
+  --color-card-hover: #17171B;
+  --color-nav-scrolled: rgba(8, 8, 10, 0.95);
+  --color-hero-text: #FFFFFF;
+  --color-hero-text-sub: rgba(255, 255, 255, 0.7);
+  --color-hero-text-icon: rgba(255, 255, 255, 0.8);
+  --color-hero-text-stat: rgba(255, 255, 255, 0.6);
+  --color-footer-text: #706B62;
+  --color-backdrop-overlay: rgba(0, 0, 0, 0.6);
+  --color-social-text: #706B62;
+  --color-social-hover-text: #08080A;
+  --color-contact-text: #E8E0D8;
+}
+
+/* Maroon-white theme */
+html.theme-maroon-white {
+  --color-primary: #800020;
+  --color-primary-hover: #9A1028;
+  --color-bg-main: #FFFFFF;
+  --color-bg-section: #F9F5F0;
+  --color-bg-card: #FFFFFF;
+  --color-bg-input: #F5F0EB;
+  --color-border: #E8DDD0;
+  --color-text-primary: #2D1B14;
+  --color-text-secondary: #6B5744;
+  --color-text-muted: #8A7560;
+  --color-text-placeholder: #B0A090;
+  --color-footer: #800020;
+  --color-hero-gradient-from: rgba(0, 0, 0, 0.55);
+  --color-hero-gradient-via: rgba(0, 0, 0, 0.35);
+  --color-hero-gradient-to: #F9F5F0;
+  --color-card-hover: #F5F0EB;
+  --color-nav-scrolled: rgba(255, 255, 255, 0.95);
+  --color-hero-text: #FFFFFF;
+  --color-hero-text-sub: rgba(255, 255, 255, 0.75);
+  --color-hero-text-icon: rgba(255, 255, 255, 0.85);
+  --color-hero-text-stat: rgba(255, 255, 255, 0.65);
+  --color-footer-text: rgba(255, 255, 255, 0.75);
+  --color-backdrop-overlay: rgba(0, 0, 0, 0.55);
+  --color-social-text: rgba(255, 255, 255, 0.7);
+  --color-social-hover-text: #FFFFFF;
+  --color-contact-text: #2D1B14;
+}
+
+/* Hero gradient override for maroon-white theme */
+html.theme-maroon-white .hero-overlay-gradient {
+  background: linear-gradient(
+    to bottom,
+    var(--color-hero-gradient-from),
+    var(--color-hero-gradient-via),
+    var(--color-hero-gradient-to)
+  ) !important;
+}
+
+/* Maroon-white theme adjustments */
+html.theme-maroon-white [data-slot="select-content"] {
+  background-color: #FFFFFF !important;
+  border-color: #E8DDD0 !important;
+  color: #2D1B14 !important;
+}
+
+html.theme-maroon-white [data-slot="select-item"] {
+  color: #2D1B14 !important;
+  background-color: transparent;
+}
+
+html.theme-maroon-white [data-slot="select-item"]:hover,
+html.theme-maroon-white [data-slot="select-item"][data-highlighted] {
+  background-color: rgba(128, 0, 32, 0.1) !important;
+  color: #800020 !important;
+}
+
+html.theme-maroon-white [data-slot="select-item"][data-state="checked"] {
+  background-color: rgba(128, 0, 32, 0.08) !important;
+  color: #800020 !important;
+}
+
+html.theme-maroon-white [data-slot="select-label"] {
+  color: #6B5744 !important;
+}
+
+html.theme-maroon-white [data-slot="select-separator"] {
+  background-color: #E8DDD0 !important;
+}
+
+html.theme-maroon-white [data-slot="popover-content"] {
+  background-color: #FFFFFF !important;
+  border-color: #E8DDD0 !important;
+}
+
+/* Maroon-white footer text override */
+html.theme-maroon-white .footer-text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Maroon-white navbar shadow */
+html.theme-maroon-white .nav-scrolled-shadow {
+  box-shadow: 0 4px 20px rgba(128, 0, 32, 0.08);
+}
+
+/* Back-to-top for maroon-white */
+html.theme-maroon-white .btn-back-to-top {
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+}
