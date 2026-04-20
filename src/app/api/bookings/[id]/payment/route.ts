@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { put } from '@vercel/blob'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -21,12 +22,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'Image and sender name are required' }, { status: 400 })
     }
 
-    // Convert file to base64
-    const bytes = await imageFile.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const base64 = buffer.toString('base64')
-    const mimeType = imageFile.type || 'image/jpeg'
-    const imageUrl = `data:${mimeType};base64,${base64}`
+    // Upload to Vercel Blob
+    const ext = imageFile.name.split('.').pop() || 'jpg'
+    const filename = `payment-${id}-${Date.now()}.${ext}`
+    const blob = await put(filename, imageFile, { access: 'public' })
+    const imageUrl = blob.url
 
     // Create payment proof
     const paymentProof = await db.paymentProof.create({
