@@ -13,18 +13,37 @@ export interface AuthUser {
 }
 
 export async function authenticateUser(username: string, password: string): Promise<AuthUser | null> {
-  const admin = await db.admin.findUnique({ where: { username } })
-  if (!admin) return null
-  
-  const isValid = await bcrypt.compare(password, admin.password)
-  if (!isValid) return null
-  
-  return {
-    id: admin.id,
-    username: admin.username,
-    name: admin.name,
-    role: admin.role,
+  // Try database first (skip if DB fails)
+  try {
+    const admin = await db.admin.findUnique({ where: { username } })
+    if (admin) {
+      const isValid = await bcrypt.compare(password, admin.password)
+      if (isValid) {
+        return {
+          id: admin.id,
+          username: admin.username,
+          name: admin.name,
+          role: admin.role,
+        }
+      }
+    }
+  } catch {
+    // Database not available — fall through to env vars
   }
+
+  // Fallback to environment variables
+  const envUser = process.env.ADMIN_USERNAME
+  const envPass = process.env.ADMIN_PASSWORD
+  if (envUser && envPass && username === envUser && password === envPass) {
+    return {
+      id: 'env-admin',
+      username: envUser,
+      name: 'Admin',
+      role: 'admin',
+    }
+  }
+
+  return null
 }
 
 export function generateToken(user: AuthUser): string {
