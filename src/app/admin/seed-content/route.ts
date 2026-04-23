@@ -2,77 +2,38 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getAuthUser } from '@/lib/auth'
 
+async function ensureTablesExist() {
+  try {
+    await db.$queryRaw`SELECT 1`
+    return true
+  } catch (error: any) {
+    throw new Error(
+      'Database tables do not exist. Please run this command in your terminal:\n' +
+      'npx prisma db push\n\n' +
+      'Or in Vercel: go to Settings > Environment Variables and make sure DATABASE_URL is set.'
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const user = getAuthUser(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
+    await ensureTablesExist()
     const results: Record<string, number> = {}
 
-    // ---- SEED ROOMS ----
     const defaultRooms = [
-      {
-        name: 'Standard Single',
-        nameSo: 'Qolka Qofkale',
-        description: 'A cozy room perfect for solo travelers looking for comfort and convenience.',
-        descriptionSo: 'Qol yar oo raaxo badan oo loogu talagalay safarayaal qofkale ah.',
-        price: 25,
-        image: '/images/room-1.jpg',
-        features: JSON.stringify(['Single Bed', 'Private Bathroom', 'Fan', 'Free WiFi']),
-        maxGuests: 1,
-        available: true,
-        sortOrder: 0,
-      },
-      {
-        name: 'Standard Double',
-        nameSo: 'Qolka Labada Qof',
-        description: 'Comfortable double room ideal for couples or friends traveling together.',
-        descriptionSo: 'Qol laba qof oo raaxo badan oo loogu talagalay lammaane ama saaxiibbada safarka.',
-        price: 40,
-        image: '/images/room-2.jpg',
-        features: JSON.stringify(['Double Bed', 'Private Bathroom', 'Fan', 'Free WiFi']),
-        maxGuests: 2,
-        available: true,
-        sortOrder: 1,
-      },
-      {
-        name: 'Family Room',
-        nameSo: 'Qolka Qoyska',
-        description: 'Spacious family room with extra bedding, perfect for small families.',
-        descriptionSo: 'Qol ballaaran oo leh qol dheeraad ah, oo ku saabsan qoysyada yar.',
-        price: 55,
-        image: '/images/room-4.jpg',
-        features: JSON.stringify(['1 Double + 1 Single Bed', 'Private Bathroom', 'AC', 'Free WiFi']),
-        maxGuests: 4,
-        available: true,
-        sortOrder: 2,
-      },
-      {
-        name: 'Deluxe Room',
-        nameSo: 'Qolka Saadaalka ah',
-        description: 'Our premium room with all amenities for a truly comfortable stay.',
-        descriptionSo: 'Qolkeena ugu fiican oo leh dhammaan adeegyada si aad u raaxayso.',
-        price: 70,
-        image: '/images/room-5.jpg',
-        features: JSON.stringify(['King Bed', 'Private Bathroom', 'AC', 'TV', 'Free WiFi', 'Mini Fridge']),
-        maxGuests: 2,
-        available: true,
-        sortOrder: 3,
-      },
+      { name: 'Standard Single', nameSo: 'Qolka Qofkale', description: 'A cozy room perfect for solo travelers looking for comfort and convenience.', descriptionSo: 'Qol yar oo raaxo badan oo loogu talagalay safarayaal qofkale ah.', price: 25, image: '/images/room-1.jpg', features: JSON.stringify(['Single Bed', 'Private Bathroom', 'Fan', 'Free WiFi']), maxGuests: 1, available: true, sortOrder: 0 },
+      { name: 'Standard Double', nameSo: 'Qolka Labada Qof', description: 'Comfortable double room ideal for couples or friends traveling together.', descriptionSo: 'Qol laba qof oo raaxo badan oo loogu talagalay lammaane ama saaxiibbada safarka.', price: 40, image: '/images/room-2.jpg', features: JSON.stringify(['Double Bed', 'Private Bathroom', 'Fan', 'Free WiFi']), maxGuests: 2, available: true, sortOrder: 1 },
+      { name: 'Family Room', nameSo: 'Qolka Qoyska', description: 'Spacious family room with extra bedding, perfect for small families.', descriptionSo: 'Qol ballaaran oo leh qol dheeraad ah, oo ku saabsan qoysyada yar.', price: 55, image: '/images/room-4.jpg', features: JSON.stringify(['1 Double + 1 Single Bed', 'Private Bathroom', 'AC', 'Free WiFi']), maxGuests: 4, available: true, sortOrder: 2 },
+      { name: 'Deluxe Room', nameSo: 'Qolka Saadaalka ah', description: 'Our premium room with all amenities for a truly comfortable stay.', descriptionSo: 'Qolkeena ugu fiican oo leh dhammaan adeegyada si aad u raaxayso.', price: 70, image: '/images/room-5.jpg', features: JSON.stringify(['King Bed', 'Private Bathroom', 'AC', 'TV', 'Free WiFi', 'Mini Fridge']), maxGuests: 2, available: true, sortOrder: 3 },
     ]
+    try {
+      const existingRooms = await db.hotelRoom.count()
+      if (existingRooms === 0) { for (const room of defaultRooms) { await db.hotelRoom.create({ data: room }) }; results.rooms = defaultRooms.length } else { results.rooms = existingRooms }
+    } catch (err: any) { results.roomsError = err.message; results.rooms = 0 }
 
-    const existingRooms = await db.hotelRoom.count()
-    if (existingRooms === 0) {
-      for (const room of defaultRooms) {
-        await db.hotelRoom.create({ data: room })
-      }
-      results.rooms = defaultRooms.length
-    } else {
-      results.rooms = existingRooms
-    }
-
-    // ---- SEED MENU ITEMS ----
-    const defaultMenuItems = [
+    const defaultMenu = [
       { category: 'breakfast', name: 'Ethiopian Breakfast', nameSo: 'Quraacan Itoobiyaan', description: 'Traditional injera with various dishes, shiro, and vegetables.', descriptionSo: 'Canjeero tradishan ah oo leh cunto badan, shiro, iyo khudaar.', price: 8, available: true, sortOrder: 0 },
       { category: 'breakfast', name: 'Continental Breakfast', nameSo: 'Quraacan Bariga Afrika', description: 'Bread, eggs, butter, jam, and fresh juice.', descriptionSo: 'Fool, ukun, subag, jam, iyo jus cusub.', price: 10, available: true, sortOrder: 1 },
       { category: 'breakfast', name: 'Light Breakfast', nameSo: 'Quraacan Faydali', description: 'Tea or coffee with bread and butter.', descriptionSo: 'Shah ama bun macaan oo leh fool iyo subag.', price: 5, available: true, sortOrder: 2 },
@@ -85,18 +46,11 @@ export async function POST(request: NextRequest) {
       { category: 'drinks', name: 'Soft Drinks', nameSo: 'Cabitaanka Cagaaran', description: 'Assorted soft drinks and sodas.', descriptionSo: 'Cabitaan kala duwan oo cagaaran ah.', price: 1, available: true, sortOrder: 4 },
       { category: 'drinks', name: 'Sparkling Water', nameSo: 'Biyo Bubbles Ah', description: 'Carbonated sparkling water.', descriptionSo: 'Biyo oo leh bubbles.', price: 1.5, available: true, sortOrder: 5 },
     ]
+    try {
+      const existingMenu = await db.menuItem.count()
+      if (existingMenu === 0) { for (const item of defaultMenu) { await db.menuItem.create({ data: item }) }; results.menuItems = defaultMenu.length } else { results.menuItems = existingMenu }
+    } catch (err: any) { results.menuError = err.message; results.menuItems = 0 }
 
-    const existingMenu = await db.menuItem.count()
-    if (existingMenu === 0) {
-      for (const item of defaultMenuItems) {
-        await db.menuItem.create({ data: item })
-      }
-      results.menuItems = defaultMenuItems.length
-    } else {
-      results.menuItems = existingMenu
-    }
-
-    // ---- SEED GALLERY ----
     const defaultGallery = [
       { title: 'Gaboose Hotel Entrance', category: 'hotel', imageUrl: '/images/hotel-1.jpg', sortOrder: 0 },
       { title: 'Hotel Interior', category: 'hotel', imageUrl: '/images/hotel-2.jpg', sortOrder: 1 },
@@ -111,18 +65,11 @@ export async function POST(request: NextRequest) {
       { title: 'Deluxe Room', category: 'room', imageUrl: '/images/room-5.jpg', sortOrder: 10 },
       { title: 'Restaurant', category: 'restaurant', imageUrl: '/images/restaurant-real.jpg', sortOrder: 11 },
     ]
+    try {
+      const existingGallery = await db.hotelImage.count()
+      if (existingGallery === 0) { for (const img of defaultGallery) { await db.hotelImage.create({ data: img }) }; results.galleryImages = defaultGallery.length } else { results.galleryImages = existingGallery }
+    } catch (err: any) { results.galleryError = err.message; results.galleryImages = 0 }
 
-    const existingGallery = await db.hotelImage.count()
-    if (existingGallery === 0) {
-      for (const img of defaultGallery) {
-        await db.hotelImage.create({ data: img })
-      }
-      results.galleryImages = defaultGallery.length
-    } else {
-      results.galleryImages = existingGallery
-    }
-
-    // ---- SEED SITE CONTENT ----
     const defaultSiteContent = [
       { key: 'hero.image', value: '/images/hotel-5.jpg', valueSo: '/images/hotel-5.jpg' },
       { key: 'restaurant.image', value: '/images/restaurant-real.jpg', valueSo: '/images/restaurant-real.jpg' },
@@ -140,59 +87,29 @@ export async function POST(request: NextRequest) {
       { key: 'hours.restaurant', value: 'Open 24 Hours', valueSo: 'Waa Fur 24 Saacaddood' },
       { key: 'hours.reception', value: '24/7 Front Desk', valueSo: 'Dhakhaar 24/7' },
     ]
-
-    let siteContentCreated = 0
-    for (const item of defaultSiteContent) {
-      const existing = await db.siteContent.findUnique({ where: { key: item.key } })
-      if (!existing) {
-        await db.siteContent.create({ data: item })
-        siteContentCreated++
+    try {
+      let siteContentCreated = 0
+      for (const item of defaultSiteContent) {
+        const existing = await db.siteContent.findUnique({ where: { key: item.key } })
+        if (!existing) { await db.siteContent.create({ data: item }); siteContentCreated++ }
       }
-    }
-    results.siteContent = siteContentCreated
+      results.siteContent = siteContentCreated
+    } catch (err: any) { results.siteError = err.message; results.siteContent = 0 }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Default content seeded successfully',
-      results,
-    })
+    const hasErrors = results.roomsError || results.menuError || results.galleryError || results.siteError
+    return NextResponse.json({ success: !hasErrors, message: hasErrors ? 'Some content failed to seed.' : 'Default content seeded successfully', results })
   } catch (error: any) {
     console.error('Seed content error:', error)
-    return NextResponse.json(
-      { error: 'Failed to seed content', details: error.message },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to seed content', details: error.message }, { status: 500 })
   }
 }
 
-// GET returns current content counts so admin can see what needs seeding
 export async function GET(request: NextRequest) {
   try {
     const user = getAuthUser(request)
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
     let rooms = 0, menuItems = 0, galleryImages = 0, siteContent = 0
-    try {
-      [rooms, menuItems, galleryImages, siteContent] = await Promise.all([
-        db.hotelRoom.count(),
-        db.menuItem.count(),
-        db.hotelImage.count(),
-        db.siteContent.count(),
-      ])
-    } catch {
-      // Database not ready yet
-    }
-
-    return NextResponse.json({
-      rooms,
-      menuItems,
-      galleryImages,
-      siteContent,
-      hasContent: rooms > 0 || menuItems > 0 || galleryImages > 0,
-    })
-  } catch (error: any) {
-    return NextResponse.json({
-      rooms: 0, menuItems: 0, galleryImages: 0, siteContent: 0, hasContent: false,
-    })
-  }
+    try { [rooms, menuItems, galleryImages, siteContent] = await Promise.all([db.hotelRoom.count(), db.menuItem.count(), db.hotelImage.count(), db.siteContent.count()]) } catch { /* Database not ready yet */ }
+    return NextResponse.json({ rooms, menuItems, galleryImages, siteContent, hasContent: rooms > 0 || menuItems > 0 || galleryImages > 0 })
+  } catch { return NextResponse.json({ rooms: 0, menuItems: 0, galleryImages: 0, siteContent: 0, hasContent: false }) }
 }
