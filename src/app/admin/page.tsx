@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   CalendarDays, MessageSquare, DollarSign, BedDouble, Users,
-  ArrowRight, Clock, CheckCircle2, XCircle, AlertCircle, TrendingUp
+  ArrowRight, Clock, CheckCircle2, XCircle, AlertCircle, TrendingUp,
+  Database, Loader2, RefreshCw
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -35,6 +36,14 @@ interface FinanceData {
   monthlyBreakdown: { month: string; revenue: number; expenses: number; profit: number }[]
 }
 
+interface ContentStatus {
+  rooms: number
+  menuItems: number
+  galleryImages: number
+  siteContent: number
+  hasContent: boolean
+}
+
 const statusColors: Record<string, { bg: string; color: string; icon: any }> = {
   pending: { bg: 'rgba(234, 179, 8, 0.12)', color: '#EAB308', icon: Clock },
   confirmed: { bg: 'rgba(59, 130, 246, 0.12)', color: '#3B82F6', icon: CheckCircle2 },
@@ -50,17 +59,22 @@ const cardStyle = {
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [finance, setFinance] = useState<FinanceData | null>(null)
+  const [contentStatus, setContentStatus] = useState<ContentStatus | null>(null)
   const [loading, setLoading] = useState(true)
+  const [seeding, setSeeding] = useState(false)
+  const [seedMessage, setSeedMessage] = useState('')
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsRes, financeRes] = await Promise.all([
+        const [statsRes, financeRes, contentRes] = await Promise.all([
           adminFetch('/api/admin/stats'),
           adminFetch('/api/admin/finances/summary'),
+          adminFetch('/api/admin/seed-content'),
         ])
         if (statsRes.ok) setStats(await statsRes.json())
         if (financeRes.ok) setFinance(await financeRes.json())
+        if (contentRes.ok) setContentStatus(await contentRes.json())
       } catch {
         // ignore
       } finally {
@@ -69,6 +83,28 @@ export default function AdminDashboardPage() {
     }
     fetchData()
   }, [])
+
+  const handleSeedContent = async () => {
+    setSeeding(true)
+    setSeedMessage('')
+    try {
+      const res = await adminFetch('/api/admin/seed-content', { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        setSeedMessage(`Seeded: ${data.results.rooms} rooms, ${data.results.menuItems} menu items, ${data.results.galleryImages} gallery images, ${data.results.siteContent} site settings`)
+        // Refresh content status
+        const contentRes = await adminFetch('/api/admin/seed-content')
+        if (contentRes.ok) setContentStatus(await contentRes.json())
+      } else {
+        const data = await res.json()
+        setSeedMessage(`Error: ${data.error || 'Failed to seed'}`)
+      }
+    } catch (err: any) {
+      setSeedMessage(`Error: ${err.message}`)
+    } finally {
+      setSeeding(false)
+    }
+  }
 
   const statCards = stats
     ? [
@@ -99,6 +135,78 @@ export default function AdminDashboardPage() {
         <h1 className="text-2xl font-bold" style={{ color: '#fff' }}>Welcome Back</h1>
         <p className="mt-1" style={{ color: '#A09890' }}>Here&apos;s what&apos;s happening at Gaboose Hotel today.</p>
       </motion.div>
+
+      {/* No Content Found Banner */}
+      {contentStatus && !contentStatus.hasContent && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-xl p-5"
+          style={{ backgroundColor: 'rgba(234, 179, 8, 0.08)', border: '1px solid rgba(234, 179, 8, 0.3)' }}
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(234, 179, 8, 0.15)' }}>
+                <Database className="w-5 h-5" style={{ color: '#EAB308' }} />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold" style={{ color: '#EAB308' }}>No Website Content Found</h3>
+                <p className="text-xs mt-0.5" style={{ color: '#A09890' }}>Your website has no rooms, menu, or gallery data. Load default content to get started.</p>
+              </div>
+            </div>
+            <Button
+              onClick={handleSeedContent}
+              disabled={seeding}
+              className="shrink-0"
+              style={{ backgroundColor: '#EAB308', color: '#000', fontWeight: 600 }}
+            >
+              {seeding ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <Database className="w-4 h-4 mr-2" />
+                  Load Default Content
+                </>
+              )}
+            </Button>
+          </div>
+          {seedMessage && (
+            <p className="text-xs mt-3 px-1" style={{ color: seeding ? '#A09890' : '#22C55E' }}>{seedMessage}</p>
+          )}
+        </motion.div>
+      )}
+
+      {/* Content Status Bar (when content exists) */}
+      {contentStatus && contentStatus.hasContent && (
+        <div className="flex items-center justify-between rounded-lg px-4 py-2.5" style={{ backgroundColor: '#111114', border: '1px solid #1E1E24' }}>
+          <div className="flex items-center gap-4 text-xs" style={{ color: '#A09890' }}>
+            <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" /> {contentStatus.rooms} rooms</span>
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-gray-600" /></span>
+            <span>{contentStatus.menuItems} menu items</span>
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-gray-600" /></span>
+            <span>{contentStatus.galleryImages} gallery images</span>
+            <span className="flex items-center gap-1"><span className="w-1 h-1 rounded-full bg-gray-600" /></span>
+            <span>{contentStatus.siteContent} settings</span>
+          </div>
+          <button
+            onClick={handleSeedContent}
+            disabled={seeding}
+            className="text-xs flex items-center gap-1 hover:underline"
+            style={{ color: '#A09890' }}
+          >
+            <RefreshCw className={`w-3 h-3 ${seeding ? 'animate-spin' : ''}`} />
+            Re-seed Defaults
+          </button>
+        </div>
+      )}
+
+      {/* Seed Message (after re-seed from status bar) */}
+      {contentStatus && contentStatus.hasContent && seedMessage && (
+        <p className="text-xs" style={{ color: '#22C55E' }}>{seedMessage}</p>
+      )}
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
