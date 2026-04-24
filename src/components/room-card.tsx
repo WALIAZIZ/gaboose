@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,75 +12,130 @@ import { useLanguage } from '@/lib/language'
 export interface RoomType {
   id: string
   name: string
+  nameSo: string
   price: number
   image: string
   description: string
-  features: { icon: React.ReactNode; label: string }[]
+  descriptionSo: string
+  features: { icon: string; label: string }[]
+  maxGuests: number
 }
 
-const rooms: RoomType[] = [
+const FALLBACK_ROOMS: RoomType[] = [
   {
     id: 'standardSingle',
     name: 'Standard Single',
+    nameSo: '',
     price: 25,
     image: '/images/room-1.jpg',
     description: 'A cozy room perfect for solo travelers looking for comfort and convenience.',
+    descriptionSo: '',
     features: [
-      { icon: <BedDouble className="h-4 w-4" />, label: 'Single Bed' },
-      { icon: <Check className="h-4 w-4" />, label: 'Private Bathroom' },
-      { icon: <Wind className="h-4 w-4" />, label: 'Fan' },
-      { icon: <Wifi className="h-4 w-4" />, label: 'Free WiFi' },
+      { icon: 'BedDouble', label: 'Single Bed' },
+      { icon: 'Check', label: 'Private Bathroom' },
+      { icon: 'Wind', label: 'Fan' },
+      { icon: 'Wifi', label: 'Free WiFi' },
     ],
+    maxGuests: 1,
   },
   {
     id: 'standardDouble',
     name: 'Standard Double',
+    nameSo: '',
     price: 40,
     image: '/images/room-2.jpg',
     description: 'Comfortable double room ideal for couples or friends traveling together.',
+    descriptionSo: '',
     features: [
-      { icon: <BedDouble className="h-4 w-4" />, label: 'Double Bed' },
-      { icon: <Check className="h-4 w-4" />, label: 'Private Bathroom' },
-      { icon: <Wind className="h-4 w-4" />, label: 'Fan' },
-      { icon: <Wifi className="h-4 w-4" />, label: 'Free WiFi' },
+      { icon: 'BedDouble', label: 'Double Bed' },
+      { icon: 'Check', label: 'Private Bathroom' },
+      { icon: 'Wind', label: 'Fan' },
+      { icon: 'Wifi', label: 'Free WiFi' },
     ],
+    maxGuests: 2,
   },
   {
     id: 'family',
     name: 'Family Room',
+    nameSo: '',
     price: 55,
     image: '/images/room-4.jpg',
     description: 'Spacious family room with extra bedding, perfect for small families.',
+    descriptionSo: '',
     features: [
-      { icon: <Users className="h-4 w-4" />, label: '1 Double + 1 Single Bed' },
-      { icon: <Check className="h-4 w-4" />, label: 'Private Bathroom' },
-      { icon: <Snowflake className="h-4 w-4" />, label: 'AC' },
-      { icon: <Wifi className="h-4 w-4" />, label: 'Free WiFi' },
+      { icon: 'Users', label: '1 Double + 1 Single Bed' },
+      { icon: 'Check', label: 'Private Bathroom' },
+      { icon: 'Snowflake', label: 'AC' },
+      { icon: 'Wifi', label: 'Free WiFi' },
     ],
+    maxGuests: 4,
   },
   {
     id: 'deluxe',
     name: 'Deluxe Room',
+    nameSo: '',
     price: 70,
     image: '/images/room-5.jpg',
     description: 'Our premium room with all amenities for a truly comfortable stay.',
+    descriptionSo: '',
     features: [
-      { icon: <BedDouble className="h-4 w-4" />, label: 'King Bed' },
-      { icon: <Check className="h-4 w-4" />, label: 'Private Bathroom' },
-      { icon: <Snowflake className="h-4 w-4" />, label: 'AC' },
-      { icon: <Tv className="h-4 w-4" />, label: 'TV' },
-      { icon: <Wifi className="h-4 w-4" />, label: 'Free WiFi' },
-      { icon: <Refrigerator className="h-4 w-4" />, label: 'Mini Fridge' },
+      { icon: 'BedDouble', label: 'King Bed' },
+      { icon: 'Check', label: 'Private Bathroom' },
+      { icon: 'Snowflake', label: 'AC' },
+      { icon: 'Tv', label: 'TV' },
+      { icon: 'Wifi', label: 'Free WiFi' },
+      { icon: 'Refrigerator', label: 'Mini Fridge' },
     ],
+    maxGuests: 2,
   },
 ]
+
+const ICON_MAP: Record<string, any> = {
+  BedDouble, Users, Wind, Wifi, Tv, Snowflake, Refrigerator, Check,
+}
+
+function getIcon(iconName: string) {
+  const Comp = ICON_MAP[iconName] || Check
+  return <Comp className="h-4 w-4" />
+}
+
+function mapDbRoom(r: any): RoomType {
+  let features: { icon: string; label: string }[] = []
+  try {
+    const parsed = JSON.parse(r.features || '[]')
+    if (Array.isArray(parsed)) features = parsed
+  } catch {}
+  return {
+    id: r.id,
+    name: r.name,
+    nameSo: r.nameSo || '',
+    price: r.price,
+    image: r.image || '/images/room-1.jpg',
+    description: r.description || '',
+    descriptionSo: r.descriptionSo || '',
+    features,
+    maxGuests: r.maxGuests || 2,
+  }
+}
 
 interface RoomCardProps {
   onBookRoom: (roomId: string, roomName: string) => void
 }
 
 export function RoomCard({ onBookRoom }: RoomCardProps) {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
+  const [rooms, setRooms] = useState<RoomType[]>(FALLBACK_ROOMS)
+
+  useEffect(() => {
+    fetch('/api/public/rooms')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setRooms(data.map(mapDbRoom))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -107,12 +163,16 @@ export function RoomCard({ onBookRoom }: RoomCardProps) {
               </Badge>
             </div>
             <CardContent className="p-5">
-              <h3 className="text-xl font-bold text-white mb-2">{t('room.' + room.id)}</h3>
-              <p className="text-[#A09890] text-sm mb-4">{t('room.' + room.id + 'Desc')}</p>
+              <h3 className="text-xl font-bold text-white mb-2">
+                {lang === 'so' && room.nameSo ? room.nameSo : room.name}
+              </h3>
+              <p className="text-[#A09890] text-sm mb-4">
+                {lang === 'so' && room.descriptionSo ? room.descriptionSo : room.description}
+              </p>
               <div className="grid grid-cols-2 gap-2 mb-4">
                 {room.features.map((feature, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-[#B8B0A4]">
-                    <span className="text-[#C4A03C]">{feature.icon}</span>
+                    <span className="text-[#C4A03C]">{getIcon(feature.icon)}</span>
                     {feature.label}
                   </div>
                 ))}
@@ -131,4 +191,4 @@ export function RoomCard({ onBookRoom }: RoomCardProps) {
   )
 }
 
-export { rooms }
+export const rooms = FALLBACK_ROOMS

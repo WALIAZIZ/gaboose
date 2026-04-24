@@ -27,7 +27,7 @@ import { Calendar as CalendarPicker } from '@/components/ui/calendar'
 import { CalendarDays, Loader2, CheckCircle2, CreditCard } from 'lucide-react'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
-import { rooms } from './room-card'
+// Rooms fetched from API
 import { useLanguage } from '@/lib/language'
 
 interface BookingDialogProps {
@@ -48,6 +48,7 @@ export function BookingDialog({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [bookingId, setBookingId] = useState('')
   const [totalAmount, setTotalAmount] = useState(0)
+  const [dynamicRooms, setDynamicRooms] = useState<any[]>([])
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -74,7 +75,17 @@ export function BookingDialog({
     }
   }, [preselectedRoomId])
 
-  const selectedRoom = rooms.find((r) => r.id === formData.roomType)
+  useEffect(() => {
+    fetch('/api/public/rooms')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) setDynamicRooms(data)
+      })
+      .catch(() => {})
+  }, [])
+
+  const allRooms = dynamicRooms.length > 0 ? dynamicRooms : [];
+    const selectedRoom = allRooms.find((r) => r.id === formData.roomType)
   const estimatedNights = useMemo(() => {
     if (!formData.checkIn || !formData.checkOut) return 0
     const diff = new Date(formData.checkOut).getTime() - new Date(formData.checkIn).getTime()
@@ -197,11 +208,11 @@ export function BookingDialog({
                       <SelectValue placeholder={t('booking.selectRoom')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {rooms.map((room) => (
+                      {dynamicRooms.length > 0 ? dynamicRooms.map((room: any) => (
                         <SelectItem key={room.id} value={room.id}>
-                          {t('room.' + room.id)} — {room.price} ETB{t('booking.perNight')}
+                          {room.name} — {room.price} ETB{t('booking.perNight')}
                         </SelectItem>
-                      ))}
+                      )) : null}
                     </SelectContent>
                   </Select>
                 </div>

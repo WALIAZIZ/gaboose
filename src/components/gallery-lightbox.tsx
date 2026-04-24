@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import {
@@ -11,7 +11,13 @@ import {
 } from '@/components/ui/dialog'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const galleryImages = [
+interface GalleryImage {
+  id: string
+  src: string
+  alt: string
+}
+
+const FALLBACK_IMAGES: GalleryImage[] = [
   { id: 'hotel-1', src: '/images/hotel-1.jpg', alt: 'Gaboose Hotel Entrance' },
   { id: 'hotel-2', src: '/images/hotel-2.jpg', alt: 'Hotel Interior' },
   { id: 'hotel-3', src: '/images/hotel-3.jpg', alt: 'Hotel Lobby' },
@@ -24,8 +30,24 @@ const galleryImages = [
 ]
 
 export function GalleryLightbox() {
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>(FALLBACK_IMAGES)
   const [isOpen, setIsOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    fetch('/api/public/gallery')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setGalleryImages(data.map((img: any) => ({
+            id: img.id,
+            src: img.imageUrl,
+            alt: img.title || 'Gallery Image',
+          })))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index)
