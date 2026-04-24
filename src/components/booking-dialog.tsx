@@ -275,6 +275,65 @@ export function BookingDialog({
                 </div>
 
               </div>
+                  <div>
+                    <Label className="text-[#B8B0A4]">{t('booking.checkout')}</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal mt-1"
+                          style={{ backgroundColor: '#08080A', borderColor: '#1E1E24', color: formData.checkOut ? '#fff' : '#5A5650' }}
+                        >
+                          <CalendarDays className="mr-2 h-4 w-4" style={{ color: '#C4A03C' }} />
+                          {formData.checkOut ? format(new Date(formData.checkOut), 'PPP') : t('booking.checkout')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3" style={{ backgroundColor: '#111114', border: '1px solid #2A2A30', borderRadius: '12px' }}>
+                        <CalendarPicker
+                          mode="single"
+                          selected={formData.checkOut ? new Date(formData.checkOut) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              handleChange('checkOut', format(date, 'yyyy-MM-dd'))
+                            }
+                          }}
+                          disabled={(date) => {
+                            if (!formData.checkIn) return false;
+                            const [y,m,d] = formData.checkIn.split('-').map(Number);
+                            const checkInDate = new Date(y, m-1, d);
+                            checkInDate.setHours(0,0,0,0);
+                            const dateToCompare = new Date(date);
+                            dateToCompare.setHours(0,0,0,0);
+                            return dateToCompare <= checkInDate;
+                          }}
+                          className="bg-transparent"
+                          classNames={{
+                            day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050] rounded-md',
+                            day_today: 'bg-[#C4A03C]/20 text-[#C4A03C] font-bold ring-1 ring-[#C4A03C]/50 rounded-md',
+                            day_outside: 'text-[#3A3630] opacity-50',
+                            day_disabled: 'text-[#3A3630] opacity-30 line-through',
+                            day_hidden: 'invisible',
+                            day: 'text-[#E8E0D8] hover:bg-[#1E1E24] rounded-md transition-colors w-8 h-8 font-medium',
+                            button_previous: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            button_next: 'text-[#C4A03C] hover:bg-[#C4A03C]/15 hover:text-[#C4A03C]',
+                            caption_label: 'text-[#fff] font-semibold',
+                            caption: 'pb-2 pt-1',
+                            nav: 'space-x-4',
+                            weekday: 'text-[#C4A03C]/70 text-xs font-medium uppercase',
+                            month: 'space-y-2',
+                            table: 'w-full border-collapse space-y-1',
+                            head_row: 'flex',
+                            head_cell: 'text-[#C4A03C]/70 rounded-md w-8 font-normal text-xs',
+                            row: 'flex w-full mt-0',
+                            cell: 'text-center p-0 relative h-8 w-8',
+                            range_middle: 'bg-[#C4A03C]/20',
+                            range_start: 'bg-[#C4A03C] text-[#08080A] rounded-l-md',
+                            range_end: 'bg-[#C4A03C] text-[#08080A] rounded-r-md',
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
 
               {/* Special Requests */}
               <div>
