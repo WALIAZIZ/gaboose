@@ -296,7 +296,7 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src="/images/hotel-5.jpg"
+            src={siteConfig.heroImage}
             alt="Gaboose Hotel Exterior"
             fill
             className="object-cover"
@@ -468,7 +468,7 @@ export default function Home() {
             <div className="relative rounded-2xl overflow-hidden mb-12 shadow-xl shadow-black/40">
               <div className="aspect-[16/7] relative">
                 <Image
-                  src="/images/restaurant-real.jpg"
+                  src={siteConfig.restaurantImage}
                   alt="Gaboose Hotel Restaurant"
                   fill
                   className="object-cover"
@@ -750,10 +750,10 @@ export default function Home() {
                       <div>
                         <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.phone')}</p>
                         <a
-                          href="tel:+251915210607"
+                          href={"tel:" + siteConfig.phone.replace(/\s/g, "")}
                           className="text-sm text-[var(--color-primary)] hover:underline"
                         >
-                          +251 91 521 0607
+                          {siteConfig.phone}
                         </a>
                       </div>
                     </div>
@@ -765,10 +765,10 @@ export default function Home() {
                       <div>
                         <p className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{t('contact.email')}</p>
                         <a
-                          href="mailto:gaboose-hotel1@hotmail.com"
+                          href={"mailto:" + siteConfig.email}
                           className="text-sm text-[var(--color-primary)] hover:underline"
                         >
-                          gaboose-hotel1@hotmail.com
+                          {siteConfig.email}
                         </a>
                       </div>
                     </div>
@@ -840,18 +840,18 @@ export default function Home() {
               <h4 className="font-semibold mb-4" style={{ color: 'var(--color-hero-text)' }}>{t('footer.contactUs')}</h4>
               <div className="space-y-2 text-sm" style={{ color: 'var(--color-footer-text)' }}>
                 <a
-                  href="tel:+251915210607"
+                  href={"tel:" + siteConfig.phone.replace(/\s/g, "")}
                   className="flex items-center gap-2 hover:text-[var(--color-primary)] transition-colors"
                 >
                   <Phone className="h-4 w-4" />
-                  +251 91 521 0607
+                  {siteConfig.phone}
                 </a>
                 <a
-                  href="mailto:gaboose-hotel1@hotmail.com"
+                  href={"mailto:" + siteConfig.email}
                   className="flex items-center gap-2 hover:text-[var(--color-primary)] transition-colors"
                 >
                   <Mail className="h-4 w-4" />
-                  gaboose-hotel1@hotmail.com
+                  {siteConfig.email}
                 </a>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />

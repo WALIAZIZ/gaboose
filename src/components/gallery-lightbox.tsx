@@ -12,15 +12,15 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const galleryImages = [
-  { src: '/images/hotel-1.jpg', alt: 'Gaboose Hotel Entrance' },
-  { src: '/images/hotel-2.jpg', alt: 'Hotel Interior' },
-  { src: '/images/hotel-3.jpg', alt: 'Hotel Lobby' },
-  { src: '/images/hotel-4.jpg', alt: 'Hotel Courtyard' },
-  { src: '/images/hotel-5.jpg', alt: 'Hotel Exterior View' },
-  { src: '/images/hotel-6.jpg', alt: 'Hotel Building' },
-  { src: '/images/room-3.jpg', alt: 'Standard Room' },
-  { src: '/images/room-1.jpg', alt: 'Guest Room' },
-  { src: '/images/room-4.jpg', alt: 'Family Room' },
+  { id: 'hotel-1', src: '/images/hotel-1.jpg', alt: 'Gaboose Hotel Entrance' },
+  { id: 'hotel-2', src: '/images/hotel-2.jpg', alt: 'Hotel Interior' },
+  { id: 'hotel-3', src: '/images/hotel-3.jpg', alt: 'Hotel Lobby' },
+  { id: 'hotel-4', src: '/images/hotel-4.jpg', alt: 'Hotel Courtyard' },
+  { id: 'hotel-5', src: '/images/hotel-5.jpg', alt: 'Hotel Exterior View' },
+  { id: 'hotel-6', src: '/images/hotel-6.jpg', alt: 'Hotel Building' },
+  { id: 'room-3', src: '/images/room-3.jpg', alt: 'Standard Room' },
+  { id: 'room-1', src: '/images/room-1.jpg', alt: 'Guest Room' },
+  { id: 'room-4', src: '/images/room-4.jpg', alt: 'Family Room' },
 ]
 
 export function GalleryLightbox() {
@@ -45,7 +45,7 @@ export function GalleryLightbox() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {galleryImages.map((image, index) => (
           <motion.div
-            key={image.src}
+            key={image.id}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
