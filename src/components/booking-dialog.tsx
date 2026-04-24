@@ -296,7 +296,7 @@ export function BookingDialog({
                           }}
                           disabled={(date) => {
                             const today = new Date(new Date().setHours(0, 0, 0, 0))
-                            const minDate = formData.checkIn ? new Date(formData.checkIn) : today
+                            const minDate = formData.checkIn ? (() => { const [y,m,d] = formData.checkIn.split("-").map(Number); return new Date(y, m-1, d) })() : today
                             minDate.setDate(minDate.getDate() + 1)
                             return date < minDate
                           }}

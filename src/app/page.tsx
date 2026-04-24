@@ -96,6 +96,7 @@ export default function Home() {
   })
 
   // Dynamic site settings from admin API
+  const [menuItems, setMenuItems] = useState<{breakfast: any[], drinks: any[]}>({breakfast: [], drinks: []})
   const [siteConfig, setSiteConfig] = useState({
     phone: '+251 91 521 0607',
     email: 'gaboose-hotel1@hotmail.com',
@@ -104,6 +105,20 @@ export default function Home() {
   })
 
 
+
+  useEffect(() => {
+    fetch('/api/public/menu')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setMenuItems({
+            breakfast: data.filter((i: any) => i.category === 'breakfast'),
+            drinks: data.filter((i: any) => i.category === 'drinks'),
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   // Scroll listener for navbar and back-to-top
   useEffect(() => {
@@ -526,32 +541,25 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {[
-                      {
-                        name: t('menu.ethiopianBreakfast'),
-                        desc: t('menu.ethiopianBreakfastDesc'),
-                        price: '8 ETB',
-                      },
-                      {
-                        name: t('menu.continental'),
-                        desc: t('menu.continentalDesc'),
-                        price: '10 ETB',
-                      },
-                      {
-                        name: t('menu.lightBreakfast'),
-                        desc: t('menu.lightBreakfastDesc'),
-                        price: '5 ETB',
-                      },
-                      {
-                        name: t('menu.fruitPlatter'),
-                        desc: t('menu.fruitPlatterDesc'),
-                        price: '4 ETB',
-                      },
-                      {
-                        name: t('menu.coffeeCeremony'),
-                        desc: t('menu.coffeeCeremonyDesc'),
-                        price: '3 ETB',
-                      },
+                    {menuItems.breakfast.length > 0 ? menuItems.breakfast.map((item: any) => (
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-start p-4 bg-[var(--color-bg-card)] rounded-lg hover:bg-[var(--color-card-hover)] border border-[var(--color-border)] transition-colors"
+                      >
+                        <div>
+                          <h4 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{lang === 'so' && item.nameSo ? item.nameSo : item.name}</h4>
+                          <p className="text-sm text-[var(--color-text-secondary)]">{lang === 'so' && item.descriptionSo ? item.descriptionSo : item.description}</p>
+                        </div>
+                        <Badge className="bg-[var(--color-primary)] text-[var(--color-bg-main)] shrink-0 ml-3 font-semibold">
+                          {item.price} ETB
+                        </Badge>
+                      </div>
+                    )) : [
+                      { name: t('menu.ethiopianBreakfast'), desc: t('menu.ethiopianBreakfastDesc'), price: '8 ETB' },
+                      { name: t('menu.continental'), desc: t('menu.continentalDesc'), price: '10 ETB' },
+                      { name: t('menu.lightBreakfast'), desc: t('menu.lightBreakfastDesc'), price: '5 ETB' },
+                      { name: t('menu.fruitPlatter'), desc: t('menu.fruitPlatterDesc'), price: '4 ETB' },
+                      { name: t('menu.coffeeCeremony'), desc: t('menu.coffeeCeremonyDesc'), price: '3 ETB' },
                     ].map((item) => (
                       <div
                         key={item.name}
@@ -584,7 +592,20 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    {[
+                    {menuItems.drinks.length > 0 ? menuItems.drinks.map((item: any) => (
+                      <div
+                        key={item.id}
+                        className="flex justify-between items-center p-4 bg-[var(--color-bg-card)] rounded-lg hover:bg-[var(--color-card-hover)] border border-[var(--color-border)] transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Check className="h-4 w-4 text-[var(--color-primary)] shrink-0" />
+                          <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{lang === 'so' && item.nameSo ? item.nameSo : item.name}</span>
+                        </div>
+                        <Badge className="bg-[var(--color-primary)] text-[var(--color-bg-main)] shrink-0 ml-3 font-semibold">
+                          {item.price} ETB
+                        </Badge>
+                      </div>
+                    )) : [
                       { name: t('menu.macchiato'), price: '2 ETB' },
                       { name: t('menu.tea'), price: '1.50 ETB' },
                       { name: t('menu.juice'), price: '3 ETB' },
