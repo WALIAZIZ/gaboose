@@ -95,6 +95,21 @@ export default function Home() {
     message: '',
   })
 
+  // Dynamic site settings from admin API
+  const [siteConfig, setSiteConfig] = useState({
+    phone: '+251 91 521 0607',
+    email: 'gaboose-hotel1@hotmail.com',
+    heroImage: '/images/hotel-5.jpg',
+    restaurantImage: '/images/restaurant-real.jpg',
+  })
+
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setSiteConfig(prev => ({ ...prev, ...data })) })
+      .catch(() => {})
+  }, [])
+
   // Scroll listener for navbar and back-to-top
   useEffect(() => {
     const handleScroll = () => {
