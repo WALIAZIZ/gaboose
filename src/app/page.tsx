@@ -103,12 +103,7 @@ export default function Home() {
     restaurantImage: '/images/restaurant-real.jpg',
   })
 
-  useEffect(() => {
-    fetch('/api/admin/settings')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data) setSiteConfig(prev => ({ ...prev, ...data })) })
-      .catch(() => {})
-  }, [])
+
 
   // Scroll listener for navbar and back-to-top
   useEffect(() => {
