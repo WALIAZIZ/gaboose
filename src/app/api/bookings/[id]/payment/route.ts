@@ -27,7 +27,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const filename = `payment-${id}-${Date.now()}.${ext}`
     let blob
       try {
-        blob = await put(filename, imageFile, { access: 'public' })
+        blob = await put(filename, imageFile)
       } catch (blobErr) {
         console.error('Blob upload error:', blobErr)
         return NextResponse.json({ error: 'Failed to upload image: ' + (blobErr instanceof Error ? blobErr.message : 'Unknown error') }, { status: 500 })
