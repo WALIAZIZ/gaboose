@@ -25,7 +25,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Upload to Vercel Blob
     const ext = imageFile.name.split('.').pop() || 'jpg'
     const filename = `payment-${id}-${Date.now()}.${ext}`
-    const blob = await put(filename, imageFile, { access: 'public' })
+    let blob
+      try {
+        blob = await put(filename, imageFile, { access: 'public' })
+      } catch (blobErr) {
+        console.error('Blob upload error:', blobErr)
+        return NextResponse.json({ error: 'Failed to upload image: ' + (blobErr instanceof Error ? blobErr.message : 'Unknown error') }, { status: 500 })
+      }
     const imageUrl = blob.url
 
     // Create payment proof
