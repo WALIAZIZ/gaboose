@@ -243,7 +243,7 @@ export function BookingDialog({
                               }
                             }
                           }}
-                          disabled={(date) => { if (!formData.checkIn) return false; const [y,m,d] = formData.checkIn.split("-").map(Number); const checkIn = new Date(y, m-1, d); checkIn.setHours(0,0,0,0); const d2 = new Date(date); d2.setHours(0,0,0,0); return d2 <= checkIn; }}
+                          disabled={(date) => { const today = new Date(); today.setHours(0,0,0,0); const d2 = new Date(date); d2.setHours(0,0,0,0); return d2 < today; }}
                           className="bg-transparent"
                           classNames={{
                             day_selected: 'bg-[#C4A03C] text-[#08080A] hover:bg-[#D4B050] focus:bg-[#D4B050] rounded-md',

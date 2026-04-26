@@ -547,6 +547,7 @@ export default function Home() {
                         className="flex justify-between items-start p-4 bg-[var(--color-bg-card)] rounded-lg hover:bg-[var(--color-card-hover)] border border-[var(--color-border)] transition-colors"
                       >
                         <div>
+                          {item.image ? <img src={item.image} alt={item.name} className="w-full h-20 object-cover rounded-lg mb-2" /> : null}
                           <h4 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{lang === 'so' && item.nameSo ? item.nameSo : item.name}</h4>
                           <p className="text-sm text-[var(--color-text-secondary)]">{lang === 'so' && item.descriptionSo ? item.descriptionSo : item.description}</p>
                         </div>
