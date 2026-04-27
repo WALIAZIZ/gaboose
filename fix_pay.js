@@ -1,4 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
+const fs = require('fs');
+const path = require('path');
+
+const dir = 'src/app/api/bookings';
+const files = fs.readdirSync(dir);
+let idDir = null;
+for (let f of files) {
+  if (f.startsWith('[')) { idDir = path.join(dir, f); break; }
+}
+const routePath = path.join(idDir, 'payment', 'route.ts');
+
+const newRoute = `import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { put } from '@vercel/blob'
 
@@ -55,3 +66,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: 'Failed to upload: ' + msg }, { status: 500 })
   }
 }
+`;
+
+fs.writeFileSync(routePath, newRoute, 'utf8');
+console.log('FIXED: Payment route rewritten with clean syntax');
+console.log('Route saved to:', routePath);
