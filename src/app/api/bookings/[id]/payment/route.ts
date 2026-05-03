@@ -27,7 +27,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Step 3: Upload to Vercel Blob (private store)
     const ext = imageFile.name.split('.').pop() || 'jpg'
     const filename = 'payment-' + id + '-' + Date.now() + '.' + ext
-    const blob = await put(filename, imageFile)
+    const blob = await put(filename, imageFile, { access: 'private' })
     const imageUrl = blob.url
 
     // Step 4: Create payment proof in database
